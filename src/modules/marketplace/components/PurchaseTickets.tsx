@@ -15,10 +15,8 @@ interface PurchaseTicketsProps {
     OwnerAddress: string;
 }
 const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
-    const { CW721Address } = props;
-    const { CW721TicketAddress } = props;
-    const { token_id } = props;
-    const { MarketplaceAddress } = props;
+    const { CW721Address, CW721TicketAddress, token_id, MarketplaceAddress } =
+        props;
     const client = useAndromedaClient();
     const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<
         any[]

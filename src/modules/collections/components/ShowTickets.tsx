@@ -7,9 +7,10 @@ import { useAndromedaStore } from "@/zustand/andromeda";
 
 interface ShowTicketsProps {
     CW721TicketAddress: string;
+    CW721POAAddress: string;
 }
 const ShowTickets: FC<ShowTicketsProps> = (props) => {
-    const { CW721TicketAddress } = props;
+    const { CW721TicketAddress, CW721POAAddress } = props;
     const client = useAndromedaClient();
     // TODO: Fix any
     const [tokens, setTokens] = useState<any[]>([]);
@@ -17,10 +18,12 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
     const { accounts } = useAndromedaStore();
     const account = accounts[0];
     const address = account?.address ?? "";
+    // TODO: tokens query can take in the owner address as a parameter
 
-    const baseURL = window.location.origin;
+    const baseURL = typeof window !== "undefined" ? window.location.origin : "";
 
     const query = useQueryContract(CW721TicketAddress);
+    const queryPOA = useQueryContract(CW721POAAddress);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,9 +35,12 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
             try {
                 const tokens = await query({ all_tokens: {} });
 
+                const approvedTokens = await queryPOA({ all_tokens: {} });
+
                 console.log(tokens);
 
                 const tokenList = tokens.tokens;
+                const approvedTokenList = approvedTokens.tokens;
 
                 for (let i = 0; i < tokenList.length; i++) {
                     const token = await query({
@@ -59,6 +65,40 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
 
                     console.log(tokenData);
                     tempTokenList.push(tokenData);
+                }
+
+                for (let i = 0; i < approvedTokenList.length; i++) {
+                    const token = await queryPOA({
+                        all_nft_info: {
+                            token_id: approvedTokenList[i],
+                        },
+                    });
+
+                    if (token.access.owner !== address) {
+                        continue;
+                    }
+
+                    const tokenData = {
+                        token_id: approvedTokenList[i],
+                        owner: token.access.owner,
+                    };
+
+                    console.log(tokenData);
+                    const existingTokenIndex = tempTokenList.findIndex(
+                        (t) => t.token_id + "-approved" === approvedTokenList[i]
+                    );
+
+                    console.log("existingTokenIndex", existingTokenIndex);
+
+                    if (existingTokenIndex !== -1) {
+                        tempTokenList[
+                            existingTokenIndex
+                        ].metadata.attributes.push({
+                            display_type: "Proof of Attendance",
+                            trait_type: "proof-of-attendance",
+                            value: "Approved Attendance",
+                        });
+                    }
                 }
 
                 setTokens(tempTokenList);
@@ -131,7 +171,7 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                                 )}
                                 <h1 className="text-2xl font-bold">QR Code</h1>
                                 <img
-                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseURL}/approve/${token.token_id}`}
+                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseURL}/admin/${token.token_id}/approve`}
                                     alt="QR Code"
                                 />
                             </div>

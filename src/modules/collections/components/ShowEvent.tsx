@@ -7,6 +7,7 @@ import {
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import Link from "next/link";
+import { ibcTypes } from "@cosmjs/stargate/build/modules";
 
 interface ShowEventProps {
     CW721Address: string;
@@ -14,13 +15,17 @@ interface ShowEventProps {
     token_id: string;
     MarketplaceAddress: string;
     OwnerAddress: string;
+    SplitterAddress: string;
 }
 const ShowEvent: FC<ShowEventProps> = (props) => {
-    const { CW721Address } = props;
-    const { CW721TicketAddress } = props;
-    const { OwnerAddress } = props;
-    const { token_id } = props;
-    const { MarketplaceAddress } = props;
+    const {
+        CW721Address,
+        SplitterAddress,
+        CW721TicketAddress,
+        OwnerAddress,
+        token_id,
+        MarketplaceAddress,
+    } = props;
     const client = useAndromedaClient();
     const [tiersTicketsList, setTiersTicketsList] = useState<any[]>([]);
     const [sellableTiersTicketsList, setSellableTiersTicketsList] = useState<
@@ -129,12 +134,17 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
         if (!client) {
             return;
         }
+
         const msg = jsonToBase64({
             start_sale: {
                 coin_denom: {
                     native_token: ticket.ticket_denom,
                 },
-                recipient: null,
+                recipient: {
+                    address: SplitterAddress,
+                    ibc_recovery_address: null,
+                    msg: "eyJzZW5kIjp7fX0=",
+                },
                 start_time: null,
                 // duration: ticket.duration || 7200000,
                 // TODO: Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things

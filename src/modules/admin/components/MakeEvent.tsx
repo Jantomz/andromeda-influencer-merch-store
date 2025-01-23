@@ -13,8 +13,14 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
     const client = useAndromedaClient();
     const eventCW721 = props.CW721Address;
     const ticketCW721 = props.TicketCW721Address;
-    const baseURL = window.location.origin;
+    const [baseURL, setBaseURL] = useState("");
     const [tokenId, setTokenId] = useState("");
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setBaseURL(window.location.origin);
+        }
+    }, []);
 
     const [isLoading, setIsLoading] = useState(false);
 

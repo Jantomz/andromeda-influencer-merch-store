@@ -13,6 +13,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
     // TODO: Fix any
     const [tokens, setTokens] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    // TODO: tokens query can take in the owner address as a parameter
 
     const query = useQueryContract(CW721Address);
 

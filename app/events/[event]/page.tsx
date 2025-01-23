@@ -12,6 +12,7 @@ const Page = async ({ params }: { params: Promise<{ event: string }> }) => {
                 CW721TicketAddress="andr1t5rfxzn207pw83562dx6r3esfe3m4wcc49gyldxuydnh8mp79mysj2hcqk"
                 MarketplaceAddress="andr13kr2jfd9a6j9qq5eevaxdkzljw04uzrftactfzea2e7pldpu7lkqe6l9mk"
                 OwnerAddress="andr1eq2npynjfyx52utu34kht3p5vhp3yflt4qr2gx"
+                SplitterAddress="andr13u9j2c65yqd0a06vfx37ywc5x9dqzly4pwzlk2ys5d9jjxsewhuqm87x7t"
             />
         </main>
     );
