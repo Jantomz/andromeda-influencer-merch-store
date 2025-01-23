@@ -17,7 +17,5 @@ export default function useQueryContract<T = any>(address: string) {
         [address, client]
     );
 
-    console.log(query);
-
     return query;
 }

@@ -1,5 +1,4 @@
 import useQueryChain from "@/lib/graphql/hooks/chain/useChainConfig";
-import { ShowCollections } from "@/modules/collections";
 import {
     disconnectAndromedaClient,
     useAndromedaStore,
@@ -106,7 +105,6 @@ const Connected: FC<ConnectedProps> = (props) => {
                                 >
                                     Explorer
                                 </Button>
-                                <ShowCollections address="andr1c2pf8e87mn5uq234pswlhqkmtkhhf72hqwt0xnw78tcyh36th4fqhrj0qu" />
                                 <Button
                                     leftIcon={<CloseIcon boxSize={2} />}
                                     onClick={disconnectAndromedaClient}

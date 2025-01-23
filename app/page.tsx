@@ -1,4 +1,4 @@
-import { ConnectWallet } from "@/modules/wallet";
+import Layout from "@/modules/general/components/Layout";
 import { Center, Image, Link, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 
@@ -26,7 +26,6 @@ const Page = async (props: Props) => {
                         here
                     </Link>
                 </Text>
-                <ConnectWallet />
             </VStack>
         </Center>
     );

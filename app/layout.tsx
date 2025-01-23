@@ -1,15 +1,17 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode } from "react";
 import Providers from "./providers";
 import { Metadata } from "next";
 import PoweredByLogo from "@/modules/ui/PoweredByLogo";
-
+import { Navbar } from "@/modules/general";
+import "@/styles/globals.css";
+import Layout from "@/modules/general/components/Layout";
 
 export const metadata: Metadata = {
     title: {
         default: "Andromeda Nextjs Starter",
-        template: "%s | App Name"
+        template: "%s | App Name",
     },
-}
+};
 
 interface Props {
     children?: ReactNode;
@@ -22,12 +24,11 @@ const RootLayout = async (props: Props) => {
         <html lang="en">
             <body>
                 <Providers>
-                    {children}
-                    <PoweredByLogo />
+                    <Layout>{children} </Layout>
                 </Providers>
             </body>
         </html>
-    )
-}
+    );
+};
 
-export default RootLayout
+export default RootLayout;
