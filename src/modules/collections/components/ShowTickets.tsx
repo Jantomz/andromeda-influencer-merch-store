@@ -3,18 +3,24 @@ import React, { FC, useEffect, useState } from "react";
 import { useQueryContract } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import Link from "next/link";
+import { useAndromedaStore } from "@/zustand/andromeda";
 
-interface ShowEventsProps {
-    CW721Address: string;
+interface ShowTicketsProps {
+    CW721TicketAddress: string;
 }
-const ShowEvents: FC<ShowEventsProps> = (props) => {
-    const { CW721Address } = props;
+const ShowTickets: FC<ShowTicketsProps> = (props) => {
+    const { CW721TicketAddress } = props;
     const client = useAndromedaClient();
     // TODO: Fix any
     const [tokens, setTokens] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { accounts } = useAndromedaStore();
+    const account = accounts[0];
+    const address = account?.address ?? "";
 
-    const query = useQueryContract(CW721Address);
+    const baseURL = window.location.origin;
+
+    const query = useQueryContract(CW721TicketAddress);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,6 +42,10 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                             token_id: tokenList[i],
                         },
                     });
+
+                    if (token.access.owner !== address) {
+                        continue;
+                    }
 
                     const response = await fetch(token.info.token_uri);
 
@@ -75,33 +85,29 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                     <>
                         {tokens.length === 0 && (
                             <div className="text-center text-2xl mt-4">
-                                No events found
+                                No tickets found
                             </div>
                         )}
                         {tokens.map((token, index) => (
-                            <Link
-                                key={index}
-                                href={`/events/${token.token_id}`}
-                            >
-                                <div className="max-w-sm rounded overflow-hidden shadow-lg my-4 p-4 bg-white">
-                                    <img
-                                        className="w-full h-48 object-cover rounded-md"
-                                        src={token.metadata.image}
-                                        alt={token.metadata.name}
-                                        onError={(e) => {
-                                            e.currentTarget.src =
-                                                "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
-                                        }}
-                                    />
-                                    <div className="px-6 py-4">
-                                        <div className="font-bold text-xl mb-2">
-                                            {token.metadata.name}
-                                        </div>
-                                        <p className="text-gray-700 text-base">
-                                            {token.metadata.description}
-                                        </p>
+                            <div className="max-w-sm rounded overflow-hidden shadow-lg my-4 p-4 bg-white">
+                                <img
+                                    className="w-full h-48 object-cover rounded-md"
+                                    src={token.metadata.image}
+                                    alt={token.metadata.name}
+                                    onError={(e) => {
+                                        e.currentTarget.src =
+                                            "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
+                                    }}
+                                />
+                                <div className="px-6 py-4">
+                                    <div className="font-bold text-xl mb-2">
+                                        {token.metadata.name}
                                     </div>
-                                    {/* <div className="px-6 py-4">
+                                    <p className="text-gray-700 text-base">
+                                        {token.metadata.description}
+                                    </p>
+                                </div>
+                                {/* <div className="px-6 py-4">
                                 <p className="text-gray-600 text-sm">
                                     Token ID: {token.token_id}
                                 </p>
@@ -109,23 +115,26 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                                     Owner: {token.owner}
                                 </p>
                             </div> */}
-                                    {token.metadata.attributes.map(
-                                        (attribute: any, index: number) =>
-                                            typeof attribute.value ===
-                                                "string" && (
-                                                <div
-                                                    key={index}
-                                                    className="px-6 text-gray-700 mr-2"
-                                                >
-                                                    <span className="font-semibold">
-                                                        {attribute.display_type}
-                                                    </span>
-                                                    : {attribute.value}
-                                                </div>
-                                            )
-                                    )}
-                                </div>
-                            </Link>
+                                {token.metadata.attributes.map(
+                                    (attribute: any, index: number) =>
+                                        typeof attribute.value === "string" && (
+                                            <div
+                                                key={index}
+                                                className="px-6 text-gray-700 mr-2"
+                                            >
+                                                <span className="font-semibold">
+                                                    {attribute.display_type}
+                                                </span>
+                                                : {attribute.value}
+                                            </div>
+                                        )
+                                )}
+                                <h1 className="text-2xl font-bold">QR Code</h1>
+                                <img
+                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseURL}/approve/${token.token_id}`}
+                                    alt="QR Code"
+                                />
+                            </div>
                         ))}
                     </>
                 )}
@@ -133,4 +142,4 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
         </>
     );
 };
-export default ShowEvents;
+export default ShowTickets;

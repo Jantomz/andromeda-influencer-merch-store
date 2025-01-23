@@ -50,6 +50,15 @@ const Navbar = (props: Props) => {
                         </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
+                        <Link href="/event-wallet" legacyBehavior passHref>
+                            <NavigationMenuLink
+                                className={navigationMenuTriggerStyle()}
+                            >
+                                Event Wallet
+                            </NavigationMenuLink>
+                        </Link>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
                         <Link href="/admin" legacyBehavior passHref>
                             <NavigationMenuLink
                                 className={navigationMenuTriggerStyle()}

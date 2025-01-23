@@ -6,24 +6,21 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
-import Link from "next/link";
 
-interface ShowEventProps {
+interface PurchaseTicketsProps {
     CW721Address: string;
     CW721TicketAddress: string;
     token_id: string;
     MarketplaceAddress: string;
     OwnerAddress: string;
 }
-const ShowEvent: FC<ShowEventProps> = (props) => {
+const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
     const { CW721Address } = props;
     const { CW721TicketAddress } = props;
-    const { OwnerAddress } = props;
     const { token_id } = props;
     const { MarketplaceAddress } = props;
     const client = useAndromedaClient();
-    const [tiersTicketsList, setTiersTicketsList] = useState<any[]>([]);
-    const [sellableTiersTicketsList, setSellableTiersTicketsList] = useState<
+    const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<
         any[]
     >([]);
     // TODO: Fix any
@@ -35,6 +32,8 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
     const queryTicket = useQueryContract(CW721TicketAddress);
     const executeTicket = useExecuteContract(CW721TicketAddress);
     const simulateTicket = useSimulateExecute(CW721TicketAddress);
+    const executePurchase = useExecuteContract(MarketplaceAddress);
+    const simulatePurchase = useSimulateExecute(MarketplaceAddress);
 
     const fetchData = async () => {
         setLoading(true);
@@ -64,11 +63,9 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
 
             const arrayOfTiers = nonStringAttributes[0].value;
 
-            let tiersList = [];
             let totalTiersList = [];
 
             for (const tier of arrayOfTiers) {
-                let availableTicketsList = [];
                 let totalTicketsList = [];
                 for (let i = 0; i < tier.amount; i++) {
                     const ticket = await queryTicket({
@@ -77,9 +74,6 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                         },
                     });
                     if (ticket.access.owner === MarketplaceAddress) {
-                        availableTicketsList.push(ticket);
-                    }
-                    if (ticket.access.owner === OwnerAddress) {
                         const metadata = await fetch(ticket.info.token_uri);
                         totalTicketsList.push({
                             ticket,
@@ -88,18 +82,13 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                         });
                     }
                 }
-                tiersList.push({
-                    title: tier.title,
-                    tickets: availableTicketsList,
-                });
                 totalTiersList.push({
                     title: tier.title,
                     tickets: totalTicketsList,
                 });
             }
 
-            setTiersTicketsList(tiersList);
-            setSellableTiersTicketsList(totalTiersList);
+            setBuyableTiersTicketsList(totalTiersList);
             // console.log(tiersList);
             // console.log(JSON.stringify(totalTiersList));
 
@@ -114,55 +103,55 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
         fetchData();
     }, [query, client]);
 
-    const jsonToBase64 = (json: any) => {
-        return Buffer.from(JSON.stringify(json)).toString("base64");
-    };
-
-    const handleSendTicketToMarketplace = async (ticket: {
-        ticket_token_id: string;
-        ticket_price: string;
-        ticket_denom: string;
-        duration?: number;
-    }) => {
-        setLoading(true);
-        console.log(ticket);
+    const handlePurchaseTicket = async (tier: string) => {
+        console.log(tier);
         if (!client) {
             return;
         }
-        const msg = jsonToBase64({
-            start_sale: {
-                coin_denom: {
-                    native_token: ticket.ticket_denom,
-                },
-                recipient: null,
-                start_time: null,
-                // duration: ticket.duration || 7200000,
-                // TODO: Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things
-                duration: null,
-                price: ticket.ticket_price.toString(),
-            },
-        });
 
-        console.log(msg);
+        fetchData();
 
-        try {
-            const result = await simulateTicket(
-                {
-                    send_nft: {
-                        contract: MarketplaceAddress,
-                        token_id: ticket.ticket_token_id,
-                        msg: msg,
-                    },
-                },
-                [{ denom: ticket.ticket_denom, amount: "500000" }]
+        // Finds the actual next possible ticket to purchase to avoid race conditions?
+        const ticket = buyableTiersTicketsList
+            .find((t) => t.title === tier)
+            ?.tickets.find(
+                (t: {
+                    ticket: {
+                        access: { owner: string };
+                    };
+                }) => t.ticket.access.owner === MarketplaceAddress
             );
 
-            await executeTicket(
+        console.log(ticket);
+        try {
+            const result = await simulatePurchase(
                 {
-                    send_nft: {
-                        contract: MarketplaceAddress,
-                        token_id: ticket.ticket_token_id,
-                        msg: msg,
+                    buy: {
+                        token_address: CW721TicketAddress,
+                        token_id: ticket.token_id,
+                    },
+                },
+                [
+                    {
+                        denom: ticket.metadata.attributes.find(
+                            (attr: any) => attr.trait_type === "denom"
+                        ).value,
+                        amount: "500000",
+                    },
+                ]
+            );
+
+            console.log("Purchase ticket simulation result:", result);
+
+            const price = ticket.metadata.attributes.find(
+                (attr: any) => attr.trait_type === "price"
+            ).value;
+
+            await executePurchase(
+                {
+                    buy: {
+                        token_address: CW721TicketAddress,
+                        token_id: ticket.token_id,
                     },
                 },
                 {
@@ -173,12 +162,19 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                         },
                     ],
                     gas: result.gas,
-                }
+                },
+                "Purchase ticket",
+                [
+                    {
+                        denom: result.amount[0].denom,
+                        amount: price.toString(),
+                    },
+                ]
             );
 
             fetchData();
         } catch (error) {
-            console.error("Error sending ticket to marketplace:", error);
+            console.error("Error purchasing ticket:", error);
         }
     };
 
@@ -211,11 +207,6 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                             <p className="text-gray-700 text-lg text-center mb-6">
                                 {token.metadata.description}
                             </p>
-                            <Link href={`${token.token_id}/purchase`}>
-                                <div className="inline-block px-6 py-2 mt-4 text-white bg-blue-500 rounded-md hover:bg-blue-600">
-                                    Purchase Tickets
-                                </div>
-                            </Link>
                         </div>
                         <div className="px-8 py-4 flex justify-between items-center">
                             <p className="text-gray-600 text-sm">
@@ -296,7 +287,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                                         </div>
                                                                         <div className="text-sm">
                                                                             {
-                                                                                tiersTicketsList.find(
+                                                                                buyableTiersTicketsList.find(
                                                                                     (
                                                                                         t
                                                                                     ) =>
@@ -378,14 +369,14 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                         {/* Ensure only the owner can see this */}
                         <div className="px-8 py-4">
                             <div className="font-semibold text-xl mb-4">
-                                Sellable Tickets
+                                Purchasable Tickets
                             </div>
-                            {sellableTiersTicketsList.map((tier, index) => (
+                            {buyableTiersTicketsList.map((tier, index) => (
                                 <div key={index} className="mb-4">
                                     <div className="font-semibold text-lg">
                                         {tier.title}
                                     </div>
-                                    {tier.tickets.map(
+                                    {tier.tickets.slice(0, 1).map(
                                         (
                                             ticket: {
                                                 ticket: any;
@@ -398,30 +389,39 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                 key={ticketIndex}
                                                 className="border p-4 rounded-md mb-2 bg-white"
                                             >
-                                                <div className="flex items-center">
-                                                    <img
-                                                        className="w-16 h-16 object-cover rounded-md mr-4"
-                                                        src={
-                                                            ticket.metadata
-                                                                .image
-                                                        }
-                                                        alt={
-                                                            ticket.metadata.name
-                                                        }
-                                                    />
-                                                    <div>
-                                                        <p className="font-semibold text-lg">
-                                                            {
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex items-center">
+                                                        <img
+                                                            className="w-16 h-16 object-cover rounded-md mr-4"
+                                                            src={
+                                                                ticket.metadata
+                                                                    .image
+                                                            }
+                                                            alt={
                                                                 ticket.metadata
                                                                     .name
                                                             }
-                                                        </p>
-                                                        <p className="text-gray-600">
-                                                            {
-                                                                ticket.metadata
-                                                                    .description
-                                                            }
-                                                        </p>
+                                                        />
+                                                        <div>
+                                                            <p className="font-semibold text-lg">
+                                                                {
+                                                                    ticket
+                                                                        .metadata
+                                                                        .name
+                                                                }
+                                                            </p>
+                                                            <p className="text-gray-600">
+                                                                {
+                                                                    ticket
+                                                                        .metadata
+                                                                        .description
+                                                                }
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-gray-600">
+                                                        {tier.tickets.length}{" "}
+                                                        tickets available
                                                     </div>
                                                 </div>
                                                 <div className="mt-4">
@@ -444,7 +444,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                         )
                                                     )}
                                                 </div>
-                                                <p className="mt-4">
+                                                {/* <p className="mt-4">
                                                     <span className="font-semibold">
                                                         Ticket ID:
                                                     </span>{" "}
@@ -455,37 +455,16 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                         Owner:
                                                     </span>{" "}
                                                     {ticket.ticket.access.owner}
-                                                </p>
+                                                </p> */}
                                                 <button
                                                     className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
                                                     onClick={() =>
-                                                        handleSendTicketToMarketplace(
-                                                            {
-                                                                // TODO: Change the duration
-                                                                ticket_token_id:
-                                                                    ticket.token_id,
-                                                                duration: 7200000,
-                                                                ticket_price:
-                                                                    ticket.metadata.attributes.find(
-                                                                        (
-                                                                            attribute: any
-                                                                        ) =>
-                                                                            attribute.trait_type ===
-                                                                            "price"
-                                                                    ).value,
-                                                                ticket_denom:
-                                                                    ticket.metadata.attributes.find(
-                                                                        (
-                                                                            attribute: any
-                                                                        ) =>
-                                                                            attribute.trait_type ===
-                                                                            "denom"
-                                                                    ).value,
-                                                            }
+                                                        handlePurchaseTicket(
+                                                            tier.title
                                                         )
                                                     }
                                                 >
-                                                    Send to Marketplace
+                                                    Purchase
                                                 </button>
                                             </div>
                                         )
@@ -499,4 +478,4 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
         </>
     );
 };
-export default ShowEvent;
+export default PurchaseTickets;
