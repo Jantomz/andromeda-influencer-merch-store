@@ -13,6 +13,8 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { useAndromedaStore } from "@/zustand/andromeda";
 
 interface ShowEventProps {
@@ -415,113 +417,120 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                         No sellable tickets found
                                     </div>
                                 )}
-                                {sellableTiersTicketsList.map((tier, index) => (
-                                    <div key={index} className="mb-4">
-                                        <div className="font-semibold text-lg text-white">
-                                            {tier.title}
-                                        </div>
-                                        {tier.tickets.length === 0 && (
-                                            <div className="text-gray-300">
-                                                No sellable tickets for this
-                                                tier
-                                            </div>
-                                        )}
-                                        {tier.tickets.length > 0 && (
-                                            <table className="min-w-full bg-gray-800">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="py-2 px-4 text-left text-white">
-                                                            Name
-                                                        </th>
-                                                        <th className="py-2 px-4 text-left text-white">
-                                                            Price
-                                                        </th>
-                                                        <th className="py-2 px-4 text-left text-white">
-                                                            Action
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {tier.tickets.map(
-                                                        (
-                                                            ticket,
-                                                            ticketIndex
-                                                        ) => (
-                                                            <tr
-                                                                key={
-                                                                    ticketIndex
-                                                                }
-                                                                className="border-b border-gray-700"
-                                                            >
-                                                                <td className="py-2 px-4 text-gray-300">
-                                                                    {
-                                                                        ticket
-                                                                            .metadata
-                                                                            .name
-                                                                    }
-                                                                </td>
-                                                                <td className="py-2 px-4 text-gray-300">
-                                                                    {
-                                                                        ticket.metadata.attributes.find(
-                                                                            (
-                                                                                attr: any
-                                                                            ) =>
-                                                                                attr.trait_type ===
-                                                                                "price"
-                                                                        ).value
-                                                                    }{" "}
-                                                                    {
-                                                                        ticket.metadata.attributes.find(
-                                                                            (
-                                                                                attr: any
-                                                                            ) =>
-                                                                                attr.trait_type ===
-                                                                                "denom"
-                                                                        ).value
-                                                                    }
-                                                                </td>
-                                                                <td className="py-2 px-4">
-                                                                    <button
-                                                                        className="px-4 py-2 bg-black border-white border text-white rounded-md hover:bg-gray-800"
-                                                                        onClick={() =>
-                                                                            handleSendTicketToMarketplace(
-                                                                                {
-                                                                                    ticket_token_id:
-                                                                                        ticket.token_id,
-                                                                                    ticket_price:
-                                                                                        ticket.metadata.attributes.find(
-                                                                                            (
-                                                                                                attr: any
-                                                                                            ) =>
-                                                                                                attr.trait_type ===
-                                                                                                "price"
-                                                                                        )
-                                                                                            .value,
-                                                                                    ticket_denom:
-                                                                                        ticket.metadata.attributes.find(
-                                                                                            (
-                                                                                                attr: any
-                                                                                            ) =>
-                                                                                                attr.trait_type ===
-                                                                                                "denom"
-                                                                                        )
-                                                                                            .value,
-                                                                                }
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        Send to
-                                                                        Marketplace
-                                                                    </button>
-                                                                </td>
+                                <ScrollArea className="h-[800px] w-full rounded-md border p-4">
+                                    {sellableTiersTicketsList.map(
+                                        (tier, index) => (
+                                            <div key={index} className="mb-4">
+                                                <div className="font-semibold text-lg text-white">
+                                                    {tier.title}
+                                                </div>
+                                                {tier.tickets.length === 0 && (
+                                                    <div className="text-gray-300">
+                                                        No sellable tickets for
+                                                        this tier
+                                                    </div>
+                                                )}
+                                                {tier.tickets.length > 0 && (
+                                                    <table className="min-w-full bg-gray-800">
+                                                        <thead>
+                                                            <tr>
+                                                                <th className="py-2 px-4 text-left text-white">
+                                                                    Name
+                                                                </th>
+                                                                <th className="py-2 px-4 text-left text-white">
+                                                                    Price
+                                                                </th>
+                                                                <th className="py-2 px-4 text-left text-white">
+                                                                    Action
+                                                                </th>
                                                             </tr>
-                                                        )
-                                                    )}
-                                                </tbody>
-                                            </table>
-                                        )}
-                                    </div>
-                                ))}
+                                                        </thead>
+                                                        <tbody>
+                                                            {tier.tickets.map(
+                                                                (
+                                                                    ticket,
+                                                                    ticketIndex
+                                                                ) => (
+                                                                    <tr
+                                                                        key={
+                                                                            ticketIndex
+                                                                        }
+                                                                        className="border-b border-gray-700"
+                                                                    >
+                                                                        <td className="py-2 px-4 text-gray-300">
+                                                                            {
+                                                                                ticket
+                                                                                    .metadata
+                                                                                    .name
+                                                                            }
+                                                                        </td>
+                                                                        <td className="py-2 px-4 text-gray-300">
+                                                                            {
+                                                                                ticket.metadata.attributes.find(
+                                                                                    (
+                                                                                        attr: any
+                                                                                    ) =>
+                                                                                        attr.trait_type ===
+                                                                                        "price"
+                                                                                )
+                                                                                    .value
+                                                                            }{" "}
+                                                                            {
+                                                                                ticket.metadata.attributes.find(
+                                                                                    (
+                                                                                        attr: any
+                                                                                    ) =>
+                                                                                        attr.trait_type ===
+                                                                                        "denom"
+                                                                                )
+                                                                                    .value
+                                                                            }
+                                                                        </td>
+                                                                        <td className="py-2 px-4">
+                                                                            <button
+                                                                                className="px-4 py-2 bg-black border-white border text-white rounded-md hover:bg-gray-800"
+                                                                                onClick={() =>
+                                                                                    handleSendTicketToMarketplace(
+                                                                                        {
+                                                                                            ticket_token_id:
+                                                                                                ticket.token_id,
+                                                                                            ticket_price:
+                                                                                                ticket.metadata.attributes.find(
+                                                                                                    (
+                                                                                                        attr: any
+                                                                                                    ) =>
+                                                                                                        attr.trait_type ===
+                                                                                                        "price"
+                                                                                                )
+                                                                                                    .value,
+                                                                                            ticket_denom:
+                                                                                                ticket.metadata.attributes.find(
+                                                                                                    (
+                                                                                                        attr: any
+                                                                                                    ) =>
+                                                                                                        attr.trait_type ===
+                                                                                                        "denom"
+                                                                                                )
+                                                                                                    .value,
+                                                                                        }
+                                                                                    )
+                                                                                }
+                                                                            >
+                                                                                Send
+                                                                                to
+                                                                                Marketplace
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                )}
+                                            </div>
+                                        )
+                                    )}
+                                </ScrollArea>
                             </div>
                         )}
                     </div>
