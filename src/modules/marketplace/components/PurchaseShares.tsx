@@ -9,6 +9,13 @@ import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
+
 interface PurchaseSharesProps {
     CW721SharesAddress: string;
     MarketplaceAddress: string;
@@ -163,21 +170,21 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
     return (
         <>
             {loading ? (
-                <div className="text-center text-2xl mt-4">
-                    <div className="flex justify-center items-center space-x-2">
-                        <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
-                        <span>Loading Shares...</span>
+                <div className="text-center text-2xl mt-4 text-white">
+                    <div className="flex justify-center items-center space-x-2 flex-col">
+                        <span className="text-xs">Loading Shares...</span>
                         <br></br>
                         {sharesProcessed > 0 && sharesLength > 0 && (
                             <Progress
                                 value={sharesProcessed}
                                 max={sharesLength}
+                                className="[&>*]:bg-blue-800 w-1/2"
                             />
                         )}
                     </div>
                 </div>
             ) : (
-                <div className="text-center mt-4">
+                <div className="text-center mt-4 text-white">
                     <div className="text-xl mb-2">
                         {buyableShares.length} / 100 shares available for
                         purchase
@@ -189,13 +196,33 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                     ) : (
                         <button
                             onClick={() => handlePurchaseShare()}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+                            className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800 border border-white transition duration-300"
                         >
-                            Purchase Share
+                            Purchase a Share
                         </button>
                     )}
                 </div>
             )}
+            <br></br>
+            {/* TODO: Complete this */}
+            <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                        <p className="text-white">What is a Ticket3 Share?</p>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <p className="text-white">Is it accessible?</p>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                    <AccordionTrigger>
+                        <p className="text-white">What do Ticket3 Shares Do?</p>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                        <p className="text-white">Is it accessible?</p>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
         </>
     );
 };

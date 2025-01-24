@@ -5,6 +5,14 @@ import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import Link from "next/link";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import { useToast } from "@/hooks/use-toast";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 
 interface ShowTicketsProps {
     CW721TicketAddress: string;
@@ -14,13 +22,11 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
     const { toast } = useToast();
     const { CW721TicketAddress, CW721POAAddress } = props;
     const client = useAndromedaClient();
-    // TODO: Fix any
     const [tokens, setTokens] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const { accounts } = useAndromedaStore();
     const account = accounts[0];
     const address = account?.address ?? "";
-    // TODO: tokens query can take in the owner address as a parameter
 
     const baseURL = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -121,74 +127,117 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
         fetchData();
     }, [query, client]);
 
-    return (
+    const getAttributeValue = (attributes: any[], traitType: string) => {
+        const attribute = attributes.find(
+            (attr) => attr.trait_type === traitType
+        );
+        return attribute ? attribute.value : null;
+    };
+
+    const categorizeTokens = (tokens: any[]) => {
+        console.log("tokens", tokens);
+        const now = new Date();
+        const pastEvents = tokens.filter(
+            (token) =>
+                new Date(
+                    getAttributeValue(token.metadata.attributes, "dateEnd")
+                ) < now
+        );
+        const currentEvents = tokens.filter(
+            (token) =>
+                new Date(
+                    getAttributeValue(token.metadata.attributes, "dateStart")
+                ) <= now &&
+                new Date(
+                    getAttributeValue(token.metadata.attributes, "dateEnd")
+                ) >= now
+        );
+        const upcomingEvents = tokens.filter(
+            (token) =>
+                new Date(
+                    getAttributeValue(token.metadata.attributes, "dateStart")
+                ) > now
+        );
+
+        return { pastEvents, currentEvents, upcomingEvents };
+    };
+
+    const { pastEvents, currentEvents, upcomingEvents } =
+        categorizeTokens(tokens);
+
+    const renderTokens = (tokens: any[], title: string) => (
         <>
+            <h2 className="text-2xl text-white mt-4">{title}</h2>
             <div className="flex flex-wrap justify-center gap-4">
-                {loading ? (
-                    <div className="text-center text-2xl mt-4">
-                        <div className="flex justify-center items-center space-x-2">
-                            <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
-                            <span>Loading...</span>
-                        </div>
+                {tokens.length === 0 ? (
+                    <div className="text-center text-2xl mt-4 text-white">
+                        No {title.toLowerCase()} found
                     </div>
                 ) : (
-                    <>
-                        {tokens.length === 0 && (
-                            <div className="text-center text-2xl mt-4">
-                                No tickets found
-                            </div>
-                        )}
-                        {tokens.map((token, index) => (
-                            <div className="max-w-sm rounded overflow-hidden shadow-lg my-4 p-4 bg-white">
+                    tokens.map((token, index) => (
+                        <Card
+                            className="max-w-sm rounded overflow-hidden shadow-lg my-4 p-4 bg-black border border-white"
+                            key={index}
+                        >
+                            <CardHeader>
                                 <img
                                     className="w-full h-48 object-cover rounded-md"
                                     src={token.metadata.image}
                                     alt={token.metadata.name}
-                                    onError={(e) => {
-                                        e.currentTarget.src =
-                                            "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
-                                    }}
                                 />
-                                <div className="px-6 py-4">
-                                    <div className="font-bold text-xl mb-2">
-                                        {token.metadata.name}
-                                    </div>
-                                    <p className="text-gray-700 text-base">
-                                        {token.metadata.description}
-                                    </p>
-                                </div>
-                                {/* <div className="px-6 py-4">
-                                <p className="text-gray-600 text-sm">
-                                    Token ID: {token.token_id}
-                                </p>
-                                <p className="text-gray-600 text-sm">
-                                    Owner: {token.owner}
-                                </p>
-                            </div> */}
+                                <CardTitle className="font-bold text-xl mb-2 text-white">
+                                    {token.metadata.name}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <CardDescription className="text-gray-300 text-base">
+                                    {token.metadata.description}
+                                </CardDescription>
+                                <br></br>
                                 {token.metadata.attributes.map(
                                     (attribute: any, index: number) =>
                                         typeof attribute.value === "string" && (
                                             <div
                                                 key={index}
-                                                className="px-6 text-gray-700 mr-2"
+                                                className="px-6 text-gray-300 mr-2"
                                             >
-                                                <span className="font-semibold">
+                                                <span className="font-semibold text-white">
                                                     {attribute.display_type}
                                                 </span>
                                                 : {attribute.value}
                                             </div>
                                         )
                                 )}
-                                <h1 className="text-2xl font-bold">QR Code</h1>
+                            </CardContent>
+                            <CardFooter className="flex justify-center">
                                 <img
                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${baseURL}/admin/${token.token_id}/approve`}
                                     alt="QR Code"
                                 />
-                            </div>
-                        ))}
-                    </>
+                            </CardFooter>
+                        </Card>
+                    ))
                 )}
             </div>
+        </>
+    );
+
+    return (
+        <>
+            {loading ? (
+                <div className="text-center text-2xl mt-4 text-white">
+                    <div className="flex justify-center items-center space-x-2">
+                        <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
+                        <span>Loading...</span>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    {renderTokens(currentEvents, "Current Events")}
+                    {renderTokens(upcomingEvents, "Upcoming Events")}
+                    {renderTokens(pastEvents, "Past Events")}
+                </>
+            )}
         </>
     );
 };

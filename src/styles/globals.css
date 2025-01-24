@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    background-color: black;
+}
+
+body {
+    background-color: black;
+}
+
 @layer base {
     :root {
         --background: 0 0% 100%;
@@ -31,8 +39,8 @@
         --radius: 0.5rem;
     }
     .dark {
-        --background: 240 10% 3.9%;
-        --foreground: 0 0% 98%;
+        --background: 0 0% 100%;
+        --foreground: 240 10% 3.9%;
         --card: 240 10% 3.9%;
         --card-foreground: 0 0% 98%;
         --popover: 240 10% 3.9%;
@@ -56,21 +64,4 @@
         --chart-4: 280 65% 60%;
         --chart-5: 340 75% 55%;
     }
-}
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-}
-
-html {
-    background-color: black;
-}
-
-body {
-    background: black;
 }

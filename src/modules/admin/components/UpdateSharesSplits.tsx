@@ -284,24 +284,37 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
     return (
         <div className="flex flex-col items-center justify-center p-6  ">
             {loading ? (
-                <div className="flex items-center justify-center space-x-3">
-                    <div className="w-5 h-5 border-4 border-t-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-                    <div className="text-lg font-semibold text-gray-600">
-                        Loading...
+                <div className="text-center text-2xl mt-4 text-white">
+                    <div className="flex justify-center items-center space-x-2">
+                        <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
+                        <span>Loading...</span>
                     </div>
                 </div>
             ) : (
                 <>
+                    <h1 className="text-2xl font-semibold text-white m-4">
+                        Update Shares Splits
+                    </h1>
                     <SharesGraph data={graphData} />
+                    {sharesUpdated && (
+                        <p className="text-lg font-semibold m-2 text-gray-400">
+                            Shares are up to date
+                        </p>
+                    )}
                     {!sharesUpdated && (
-                        <button
-                            onClick={() => handleUpdateSharesSplits()}
-                            disabled={sharesUpdated}
-                            className={`mt-4 px-5 py-2.5 rounded-lg text-white text-sm transition-colors duration-300
+                        <>
+                            <p className="text-lg font-semibold m-2 text-red-400">
+                                Shares need updating
+                            </p>
+                            <button
+                                onClick={() => handleUpdateSharesSplits()}
+                                disabled={sharesUpdated}
+                                className={` px-5 py-2.5 rounded-lg text-white text-sm transition-colors duration-300
                                 bg-red-400 hover:bg-red-600`}
-                        >
-                            Update share splits
-                        </button>
+                            >
+                                Update share splits
+                            </button>
+                        </>
                     )}
                 </>
             )}

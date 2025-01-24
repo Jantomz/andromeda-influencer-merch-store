@@ -1,15 +1,5 @@
-import Layout from "@/modules/general/components/Layout";
-import { PurchaseShares } from "@/modules/marketplace/components";
-import { Center, Image, Link, Text, VStack } from "@chakra-ui/react";
 import { ParticlesObject } from "./particles";
 import React from "react";
-import {
-    OwnerAddress,
-    SharesMarketplaceAddress,
-    CW721SharesAddress,
-    SplitterAddress,
-} from "@/ContractAddresses";
-import ShowShares from "@/modules/collections/components/ShowShares";
 
 interface Props {}
 
@@ -25,13 +15,6 @@ const Page = async (props: Props) => {
                 <h2 className="z-40 text-3xl max-md:text-2xl font-semibold w-1/2 max-md:w-3/4 text-center text-white">
                     Ticket3
                 </h2>
-                {/* Find a place to put these */}
-                {/* <ShowShares SplitterAddress={SplitterAddress} /> */}
-                {/* <PurchaseShares
-                CW721SharesAddress={CW721SharesAddress}
-                MarketplaceAddress={SharesMarketplaceAddress}
-                OwnerAddress={OwnerAddress}
-            /> */}
                 <div className="absolute inset-0 z-0">
                     <ParticlesObject position="absolute" />
                 </div>

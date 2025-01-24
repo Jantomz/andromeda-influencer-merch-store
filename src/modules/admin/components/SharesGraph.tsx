@@ -40,10 +40,14 @@ const SharesGraph: React.FC<SharesGraphProps> = ({ data }) => {
     }, [data]);
 
     return (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col bg-gray-900 text-white">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Shares Distribution</CardTitle>
-                <CardDescription>Current Shares Data</CardDescription>
+                <CardTitle className="text-white">
+                    Shares Distribution
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                    Current Shares Data
+                </CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
@@ -85,14 +89,14 @@ const SharesGraph: React.FC<SharesGraphProps> = ({ data }) => {
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={viewBox.cy}
-                                                    className="fill-foreground text-3xl font-bold"
+                                                    className="fill-white text-3xl font-bold"
                                                 >
                                                     {totalShareholders.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={(viewBox.cy || 0) + 24}
-                                                    className="fill-muted-foreground"
+                                                    className="fill-gray-400"
                                                 >
                                                     Shareholders
                                                 </tspan>
@@ -107,7 +111,7 @@ const SharesGraph: React.FC<SharesGraphProps> = ({ data }) => {
                 </ChartContainer>
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
-                <div className="leading-none text-muted-foreground">
+                <div className="leading-none text-gray-400">
                     Showing total shareholders distribution
                 </div>
             </CardFooter>

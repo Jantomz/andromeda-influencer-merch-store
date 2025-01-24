@@ -82,12 +82,12 @@ const ShowShares: FC<ShowSharesProps> = (props) => {
     }, [client]);
 
     return (
-        <div className="flex flex-col items-center justify-center p-6  ">
+        <div className="flex flex-col items-center justify-center p-6 bg-black text-white">
             {loading ? (
-                <div className="flex items-center justify-center space-x-3">
-                    <div className="w-5 h-5 border-4 border-t-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-                    <div className="text-lg font-semibold text-gray-600">
-                        Loading...
+                <div className="text-center text-2xl mt-4 text-white">
+                    <div className="flex justify-center items-center space-x-2">
+                        <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
+                        <span>Loading...</span>
                     </div>
                 </div>
             ) : (

@@ -10,6 +10,7 @@ import {
     NavigationMenuTrigger,
     NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import { OwnerAddress } from "@/ContractAddresses";
 
 import { ConnectWallet } from "@/modules/wallet";
 import { useAndromedaStore } from "@/zustand/andromeda";
@@ -70,23 +71,25 @@ const Navbar = (props: Props) => {
                         </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
-                        <Link href="/event-wallet" legacyBehavior passHref>
+                        <Link href="/join-shares" legacyBehavior passHref>
                             <NavigationMenuLink
                                 className={navigationMenuTriggerStyle()}
                             >
-                                Join Ticket3 Shares
+                                Get Ticket3 Shares
                             </NavigationMenuLink>
                         </Link>
                     </NavigationMenuItem>
-                    <NavigationMenuItem>
-                        <Link href="/admin" legacyBehavior passHref>
-                            <NavigationMenuLink
-                                className={navigationMenuTriggerStyle()}
-                            >
-                                Admin
-                            </NavigationMenuLink>
-                        </Link>
-                    </NavigationMenuItem>
+                    {address === OwnerAddress && (
+                        <NavigationMenuItem>
+                            <Link href="/admin" legacyBehavior passHref>
+                                <NavigationMenuLink
+                                    className={navigationMenuTriggerStyle()}
+                                >
+                                    Admin
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+                    )}
                     <NavigationMenuItem>
                         <ConnectWallet />
                     </NavigationMenuItem>

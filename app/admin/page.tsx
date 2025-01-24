@@ -20,18 +20,18 @@ const Page = async (props: Props) => {
                 CW721Address={CW721EventsAddress}
                 TicketCW721Address={CW721TicketsAddress}
             />
-            {/* <MakeShares CW721SharesAddress={CW721SharesAddress} /> */}
-            {/* <SendShares
-                MarketplaceAddress={SharesMarketplaceAddress}
-                OwnerAddress={OwnerAddress}
-                CW721SharesAddress={CW721SharesAddress}
-            /> */}
             <UpdateSharesSplits
                 SplitterAddress={SplitterAddress}
                 CW721SharesAddress={CW721SharesAddress}
                 MarketplaceAddress={SharesMarketplaceAddress}
                 OwnerAddress={OwnerAddress}
             />
+            <SendShares
+                MarketplaceAddress={SharesMarketplaceAddress}
+                OwnerAddress={OwnerAddress}
+                CW721SharesAddress={CW721SharesAddress}
+            />
+            <MakeShares CW721SharesAddress={CW721SharesAddress} />
         </main>
     );
 };

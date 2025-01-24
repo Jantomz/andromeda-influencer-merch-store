@@ -4,6 +4,7 @@ import { useExecuteContract, useSimulateExecute } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import { useToast } from "@/hooks/use-toast";
+import { OwnerAddress } from "@/ContractAddresses";
 
 interface MakeEventProps {
     CW721Address: string;
@@ -18,12 +19,6 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
     const ticketCW721 = props.TicketCW721Address;
     const [baseURL, setBaseURL] = useState("");
     const [tokenId, setTokenId] = useState("");
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            setBaseURL(window.location.origin);
-        }
-    }, []);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -41,6 +36,20 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
     const { accounts } = useAndromedaStore();
     const account = accounts[0];
     const userAddress = account?.address ?? "";
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setBaseURL(window.location.origin);
+        }
+        if (userAddress !== OwnerAddress) {
+            toast({
+                title: "Unauthorized",
+                description:
+                    "You are not the owner of this contract, so you cannot perform any actions, though you are free to explore",
+                variant: "destructive",
+            });
+        }
+    }, []);
 
     const execute = useExecuteContract(eventCW721);
     const simulate = useSimulateExecute(eventCW721);
@@ -287,13 +296,17 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
         return <div className="text-red-500">Wallet Not Connected</div>;
     }
     return (
-        <section className="p-6 bg-gray-100 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4">Make Event</h1>
+        <section className="p-6 bg-black rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold mb-4 text-white text-center">
+                Make Event
+            </h1>
 
             {isLoading ? (
-                <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-                    <span className="ml-2 text-gray-700">Loading...</span>
+                <div className="text-center text-2xl mt-4 text-white">
+                    <div className="flex justify-center items-center space-x-2">
+                        <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
+                        <span>Loading...</span>
+                    </div>
                 </div>
             ) : (
                 <div>
@@ -323,36 +336,36 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                 "/api/event-metadata?token_id=" +
                                 tokenId;
 
-                            console.log(
-                                JSON.stringify({
-                                    token_id: tokenId,
-                                    name,
-                                    description,
-                                    image,
-                                    attributes: [
-                                        {
-                                            display_type: "Start Date",
-                                            trait_type: "dateStart",
-                                            value: dateStart,
-                                        },
-                                        {
-                                            display_type: "End Date",
-                                            trait_type: "dateEnd",
-                                            value: dateEnd,
-                                        },
-                                        {
-                                            display_type: "Location",
-                                            trait_type: "location",
-                                            value: location,
-                                        },
-                                        {
-                                            display_type: "Ticket Tiers",
-                                            trait_type: "tiers",
-                                            value: tiers,
-                                        },
-                                    ],
-                                })
-                            );
+                            // console.log(
+                            //     JSON.stringify({
+                            //         token_id: tokenId,
+                            //         name,
+                            //         description,
+                            //         image,
+                            //         attributes: [
+                            //             {
+                            //                 display_type: "Start Date",
+                            //                 trait_type: "dateStart",
+                            //                 value: dateStart,
+                            //             },
+                            //             {
+                            //                 display_type: "End Date",
+                            //                 trait_type: "dateEnd",
+                            //                 value: dateEnd,
+                            //             },
+                            //             {
+                            //                 display_type: "Location",
+                            //                 trait_type: "location",
+                            //                 value: location,
+                            //             },
+                            //             {
+                            //                 display_type: "Ticket Tiers",
+                            //                 trait_type: "tiers",
+                            //                 value: tiers,
+                            //             },
+                            //         ],
+                            //     })
+                            // );
 
                             await handleMint(
                                 tokenId,
@@ -368,16 +381,16 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                         className="space-y-4"
                     >
                         <div className="space-y-4">
-                            <p className="block text-gray-600">
+                            <p className="block text-gray-400">
                                 Event Token ID: {tokenId}
                             </p>
-                            <label className="block">
+                            <label className="block text-gray-400">
                                 Name:
                                 <input
                                     type="text"
                                     name="name"
                                     required
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                                     onChange={(e) => {
                                         const value = e.target.value
                                             .toLowerCase()
@@ -392,25 +405,25 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                     }}
                                 />
                             </label>
-                            <label className="block">
+                            <label className="block text-gray-400">
                                 Description:
                                 <input
                                     type="text"
                                     name="description"
                                     required
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                                 />
                             </label>
-                            <label className="block">
+                            <label className="block text-gray-400">
                                 Image URL:
                                 <input
                                     type="text"
                                     name="image"
                                     required
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                                 />
                             </label>
-                            <label className="block">
+                            <label className="block text-gray-400">
                                 Start Date:
                                 <input
                                     type="date"
@@ -419,10 +432,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                     defaultValue={
                                         new Date().toISOString().split("T")[0]
                                     }
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                                 />
                             </label>
-                            <label className="block">
+                            <label className="block text-gray-400">
                                 End Date:
                                 <input
                                     type="date"
@@ -431,28 +444,28 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                     defaultValue={
                                         new Date().toISOString().split("T")[0]
                                     }
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                                 />
                             </label>
-                            <label className="block">
+                            <label className="block text-gray-400">
                                 Location:
                                 <input
                                     type="text"
                                     name="location"
                                     required
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                    className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-700 text-white"
                                 />
                             </label>
                             <div>
-                                <h2 className="text-xl font-semibold mb-2">
+                                <h2 className="text-xl font-semibold mb-2 text-white">
                                     Ticket Tiers
                                 </h2>
                                 {tiers.map((tier, index) => (
                                     <div
                                         key={index}
-                                        className="space-y-2 mb-4 p-4 border border-gray-300 rounded-md"
+                                        className="space-y-2 mb-4 p-4 border border-white rounded-md bg-black"
                                     >
-                                        <label className="block">
+                                        <label className="block text-gray-400">
                                             Title:
                                             <input
                                                 type="text"
@@ -465,10 +478,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                     setTiers(newTiers);
                                                 }}
                                                 required
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                                             />
                                         </label>
-                                        <label className="block">
+                                        <label className="block text-gray-400">
                                             Perks:
                                             <textarea
                                                 name={`tier-perks-${index}`}
@@ -480,10 +493,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                     setTiers(newTiers);
                                                 }}
                                                 required
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                                             />
                                         </label>
-                                        <label className="block">
+                                        <label className="block text-gray-400">
                                             Price:
                                             <input
                                                 type="number"
@@ -498,10 +511,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                     setTiers(newTiers);
                                                 }}
                                                 required
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                                             />
                                         </label>
-                                        <label className="block">
+                                        <label className="block text-gray-400">
                                             Denom:
                                             <input
                                                 type="text"
@@ -514,10 +527,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                     setTiers(newTiers);
                                                 }}
                                                 required
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                                             />
                                         </label>
-                                        <label className="block">
+                                        <label className="block text-gray-400">
                                             # of Tickets to Mint:
                                             <input
                                                 type="number"
@@ -533,10 +546,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                     setTiers(newTiers);
                                                 }}
                                                 required
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                                             />
                                         </label>
-                                        <label className="block">
+                                        <label className="block text-gray-400">
                                             Ticket Image URL:
                                             <input
                                                 type="text"
@@ -549,7 +562,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                     setTiers(newTiers);
                                                 }}
                                                 required
-                                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                                className="mt-1 block w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                                             />
                                         </label>
                                         <button
@@ -560,7 +573,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                                 );
                                                 setTiers(newTiers);
                                             }}
-                                            className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
+                                            className="mt-2 px-4 py-2 bg-transparent text-red-100 underline underline-offset-1 hover:underline-offset-0 rounded-md"
                                         >
                                             Remove Tier
                                         </button>
@@ -581,7 +594,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                             },
                                         ])
                                     }
-                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+                                    className="mt-2 px-4 py-2 bg-black underline text-green-100 underline-offset-1 hover:underline-offset-0 rounded-md"
                                 >
                                     Add Tier
                                 </button>
@@ -589,7 +602,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                         </div>
                         <button
                             type="submit"
-                            className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md"
+                            className="mt-4 px-4 py-2 bg-black border border-white hover:bg-gray-800 text-white rounded-md"
                         >
                             Create Event
                         </button>

@@ -1,5 +1,5 @@
 "use client";
-import { Box, Divider } from "@chakra-ui/react";
+import { Box, ChakraProvider, Divider } from "@chakra-ui/react";
 import React, { FC, ReactNode } from "react";
 import Navbar from "./Navbar";
 import PoweredByLogo from "@/modules/ui/PoweredByLogo";
@@ -21,9 +21,6 @@ const Layout: FC<LayoutProps> = (props) => {
                 {children}
             </Box>
             <PoweredByLogo />
-            {/* <Box>
-        <Footer />
-      </Box> */}
             <Toaster />
         </Box>
     );

@@ -1,6 +1,11 @@
 "use client";
 
-import { useExecuteContract, useSimulateExecute } from "@/lib/andrjs";
+import { useToast } from "@/hooks/use-toast";
+import {
+    useExecuteContract,
+    useQueryContract,
+    useSimulateExecute,
+} from "@/lib/andrjs";
 import { MakeEvent } from "@/modules/admin";
 import Layout from "@/modules/general/components/Layout";
 import { useAndromedaStore } from "@/zustand/andromeda";
@@ -11,15 +16,31 @@ interface MakeSharesProps {
 }
 
 const MakeShares: FC<MakeSharesProps> = (props) => {
+    const { toast } = useToast();
     const { CW721SharesAddress } = props;
     const execute = useExecuteContract(CW721SharesAddress);
     const simulate = useSimulateExecute(CW721SharesAddress);
+    const query = useQueryContract(CW721SharesAddress);
 
     const { accounts } = useAndromedaStore();
     const account = accounts[0];
     const userAddress = account?.address ?? "";
 
     const handleMintShares = async () => {
+        const tokens = await query({
+            all_tokens: {},
+        });
+
+        if (tokens.tokens.length > 0) {
+            toast({
+                title: "Shares already minted",
+                description: "Shares have already been minted",
+                duration: 5000,
+                variant: "destructive",
+            });
+            return;
+        }
+
         const batchSize = 100;
         for (let batchStart = 0; batchStart < 100; batchStart += batchSize) {
             const batchEnd = Math.min(batchStart + batchSize, 100);
@@ -68,9 +89,17 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
     };
 
     return (
-        <main>
-            <button onClick={() => handleMintShares()}>Mint Shares</button>
-        </main>
+        <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
+            <button
+                onClick={() => handleMintShares()}
+                className="px-6 py-3 mt-5 text-white bg-black border border-white rounded hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+            >
+                Mint 100 Shares
+            </button>
+            <p className="text-xs font-thin text-gray-300">
+                You can only make shares if there are no shares minted!
+            </p>
+        </div>
     );
 };
 

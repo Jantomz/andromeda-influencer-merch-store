@@ -228,10 +228,10 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
     return (
         <>
             {loading ? (
-                <div className="text-center text-2xl mt-4">
+                <div className="text-center text-2xl mt-4 text-white">
                     <div className="flex justify-center items-center space-x-2">
                         <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
-                        <span className="text-white">Loading...</span>
+                        <span>Loading...</span>
                     </div>
                 </div>
             ) : (

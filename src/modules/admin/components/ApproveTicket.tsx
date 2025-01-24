@@ -118,19 +118,21 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
         return <div className="text-red-500">Wallet Not Connected</div>;
     }
     return (
-        <section className="p-6 bg-gray-100 rounded-lg shadow-md">
-            <h1 className="text-2xl font-bold mb-4">Approve Ticket</h1>
+        <section className="p-6 bg-gray-800 rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold mb-4 text-white">
+                Approve Ticket
+            </h1>
 
             {isLoading ? (
                 <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-                    <span className="ml-2 text-gray-700">Loading...</span>
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                    <span className="ml-2 text-gray-300">Loading...</span>
                 </div>
             ) : (
                 <div>
                     <button
                         onClick={() => handleApprove()}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                        className="bg-black border border-white text-white px-4 py-2 rounded-md hover:bg-gray-800"
                     >
                         Approve Ticket
                     </button>

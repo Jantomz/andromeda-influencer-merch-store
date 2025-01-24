@@ -6,6 +6,7 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SendSharesProps {
     MarketplaceAddress: string;
@@ -31,7 +32,7 @@ const SendShares: FC<SendSharesProps> = (props) => {
         }
 
         const result = await query({
-            all_tokens: { limit: 200 },
+            tokens: { limit: 100, owner: OwnerAddress },
         });
 
         console.log(result);
@@ -115,7 +116,7 @@ const SendShares: FC<SendSharesProps> = (props) => {
     return (
         <>
             {loading ? (
-                <div className="text-center text-2xl mt-4">
+                <div className="text-center text-2xl mt-4 text-white">
                     <div className="flex justify-center items-center space-x-2">
                         <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
                         <span>Loading...</span>
@@ -123,32 +124,39 @@ const SendShares: FC<SendSharesProps> = (props) => {
                 </div>
             ) : (
                 <div>
+                    <h1 className="text-2xl text-white font-semibold text-center m-4">
+                        Organization Self-Owned Shares
+                    </h1>
                     {tokens.length === 0 && (
-                        <div className="text-center text-2xl mt-4">
-                            No tickets found
+                        <div className="text-center text-2xl mt-4 text-white">
+                            No shares found
                         </div>
                     )}
-                    {tokens.map((token) => (
-                        <div key={token}>
-                            <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md">
-                                <div>
-                                    <div className="text-lg font-bold">
-                                        {token}
+                    <ScrollArea className="h-[800px] w-full rounded-md border p-4">
+                        {tokens.map((token) => (
+                            <div key={token} className="flex flex-col gap-4">
+                                <div className="flex items-center justify-between bg-black border border-white p-4 rounded-lg shadow-md m-2">
+                                    <div>
+                                        <div className="text-lg font-bold text-white">
+                                            {token}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button
+                                            onClick={() =>
+                                                handleSendTicketToMarketplace(
+                                                    token
+                                                )
+                                            }
+                                            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                        >
+                                            Send to Marketplace
+                                        </button>
                                     </div>
                                 </div>
-                                <div>
-                                    <button
-                                        onClick={() =>
-                                            handleSendTicketToMarketplace(token)
-                                        }
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-                                    >
-                                        Send to Marketplace
-                                    </button>
-                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </ScrollArea>
                 </div>
             )}
         </>

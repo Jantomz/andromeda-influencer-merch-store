@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import Providers from "./providers";
 import { Metadata } from "next";
 import "@/styles/globals.css";
-import Layout from "@/modules/general/components/Layout";
+import { Layout } from "@/modules/general";
 
 export const metadata: Metadata = {
     title: {
@@ -19,7 +19,7 @@ const RootLayout = async (props: Props) => {
     const { children } = props;
 
     return (
-        <html lang="en">
+        <html lang="en" className="dark">
             <body>
                 <Providers>
                     <Layout>{children}</Layout>
