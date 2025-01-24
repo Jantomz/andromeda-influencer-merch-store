@@ -125,13 +125,7 @@ export const ParticlesObject = ({ position }: ParticlesObjectProps) => {
     );
 
     if (init) {
-        return (
-            <Particles
-                id="tsparticles"
-                particlesLoaded={particlesLoaded}
-                options={options}
-            />
-        );
+        return <Particles id="tsparticles" options={options} />;
     }
 
     return <></>;

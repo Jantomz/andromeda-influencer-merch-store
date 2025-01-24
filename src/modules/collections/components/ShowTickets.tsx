@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { useQueryContract } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
-import Link from "next/link";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import { useToast } from "@/hooks/use-toast";
 import {

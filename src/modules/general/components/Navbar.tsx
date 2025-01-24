@@ -2,13 +2,9 @@
 
 import {
     NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
-    NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { OwnerAddress } from "@/ContractAddresses";
 
@@ -34,7 +30,7 @@ const Navbar = (props: Props) => {
     return (
         <div className="p-4 z-40 mt-3">
             <NavigationMenu className="mx-auto">
-                <NavigationMenuList className="gap-4">
+                <NavigationMenuList className="flex flex-wrap gap-4 justify-center md:justify-start">
                     <NavigationMenuItem>
                         <Link href="/" legacyBehavior passHref>
                             <img

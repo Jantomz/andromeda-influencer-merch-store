@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart, Cell } from "recharts";
 
 import {
@@ -30,7 +29,7 @@ const chartConfig = {
     name: {
         label: "Name",
     },
-} satisfies ChartConfig;
+} as ChartConfig;
 
 const COLORS = ["#A8DADC", "#457B9D", "#1D3557", "#F1FAEE"];
 

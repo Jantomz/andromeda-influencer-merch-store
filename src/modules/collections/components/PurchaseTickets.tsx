@@ -30,17 +30,13 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
         props;
     const client = useAndromedaClient();
 
-    const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<
-        any[]
-    >([]);
+    const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<any[]>([]);
     const [token, setToken] = useState<any>();
 
     const [loading, setLoading] = useState(true);
 
     const query = useQueryContract(CW721Address);
     const queryTicket = useQueryContract(CW721TicketAddress);
-    const executeTicket = useExecuteContract(CW721TicketAddress);
-    const simulateTicket = useSimulateExecute(CW721TicketAddress);
     const executePurchase = useExecuteContract(MarketplaceAddress);
     const simulatePurchase = useSimulateExecute(MarketplaceAddress);
 
@@ -218,19 +214,10 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
             ) : (
                 token && (
                     <div className="max-w-4xl mx-auto rounded overflow-hidden shadow-lg my-8 p-6 bg-black">
-                        <img
-                            className="w-full h-96 object-cover rounded-md"
-                            src={token.metadata.image}
-                            alt={token.metadata.name}
-                            onError={(e) => {
-                                e.currentTarget.src =
-                                    "https://via.placeholder.com/300";
-                            }}
-                        />
 
                         <div className="px-8 py-6">
                             <div className="font-bold text-3xl mb-4 text-center text-white">
-                                {token.metadata.name}
+                                Purchase Tickets for {token.metadata.name}
                             </div>
                             <p className="text-gray-300 text-lg text-center mb-6">
                                 {token.metadata.description}

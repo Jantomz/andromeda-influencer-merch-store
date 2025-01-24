@@ -1,5 +1,3 @@
-import Layout from "@/modules/general/components/Layout";
-import { PurchaseShares } from "@/modules/marketplace/components";
 import React from "react";
 import {
     OwnerAddress,
@@ -8,13 +6,13 @@ import {
     SplitterAddress,
 } from "@/ContractAddresses";
 import ShowShares from "@/modules/collections/components/ShowShares";
+import PurchaseShares from "@/components/purchase/PurchaseShares";
 
 interface Props {}
 
 const Page = async (props: Props) => {
     return (
         <main>
-            {/* Find a place to put these */}
             <ShowShares SplitterAddress={SplitterAddress} />
             <PurchaseShares
                 CW721SharesAddress={CW721SharesAddress}

@@ -6,15 +6,8 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useAndromedaStore } from "@/zustand/andromeda";
 
 interface PurchaseSharesProps {
@@ -200,11 +193,12 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                         <span className="text-xs">Loading Shares...</span>
                         <br></br>
                         {sharesProcessed > 0 && sharesLength > 0 && (
-                            <Progress
-                                value={sharesProcessed}
-                                max={sharesLength}
-                                className="[&>*]:bg-blue-800 w-1/2"
-                            />
+                            <div>
+                                <span>
+                                    {sharesProcessed} / {sharesLength} shares
+                                    processed
+                                </span>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -239,57 +233,49 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                 </div>
             )}
             <div className="h-24"></div>
-            <Accordion type="single" collapsible className="w-1/2 mx-auto">
-                <AccordionItem value="item-1">
-                    <AccordionTrigger>
-                        <p className="text-white">What is a Ticket3 Share?</p>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <p className="text-white">
-                            A Ticket3 Share represents a fractional ownership in
-                            the Ticket3 platform. By purchasing a share, you are
-                            essentially investing in the platform and its future
-                            success. Each share entitles you to a portion of the
-                            revenue generated from ticket sales on the platform.
-                            The more shares you own, the larger your share of
-                            the revenue. Additionally, owning shares gives you a
-                            stake in the decision-making process of the
-                            platform, allowing you to vote on important issues
-                            and help shape the future direction of Ticket3.
-                        </p>
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-2">
-                    <AccordionTrigger>
-                        <p className="text-white">What do Ticket3 Shares Do?</p>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <p className="text-white">
-                            Ticket3 Shares allow you to fund the creators of the
-                            platform and events while also earning a small
-                            percentage of EVERY ticket purchase, based on how
-                            many shares you own. It's like a rewards program
-                            where your support for the platform and events is
-                            recognized and rewarded.
-                        </p>
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="item-3">
-                    <AccordionTrigger>
-                        <p className="text-white">
-                            How long does it take my shares to be logged in the
-                            Ticket3 System?
-                        </p>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <p className="text-white">
-                            It takes roughly a day for your shares to be logged
-                            in the Ticket3 System, depending on when the
-                            platform is able to update the shares.
-                        </p>
-                    </AccordionContent>
-                </AccordionItem>
-            </Accordion>
+            <div className="w-1/2 mx-auto">
+                <div className="mb-4">
+                    <button className="w-full text-left text-white bg-gray-800 p-4 rounded-t">
+                        What is a Ticket3 Share?
+                    </button>
+                    <div className="p-4 bg-gray-700 text-white rounded-b">
+                        A Ticket3 Share represents a fractional ownership in the
+                        Ticket3 platform. By purchasing a share, you are
+                        essentially investing in the platform and its future
+                        success. Each share entitles you to a portion of the
+                        revenue generated from ticket sales on the platform. The
+                        more shares you own, the larger your share of the
+                        revenue. Additionally, owning shares gives you a stake
+                        in the decision-making process of the platform, allowing
+                        you to vote on important issues and help shape the
+                        future direction of Ticket3.
+                    </div>
+                </div>
+                <div className="mb-4">
+                    <button className="w-full text-left text-white bg-gray-800 p-4 rounded-t">
+                        What do Ticket3 Shares Do?
+                    </button>
+                    <div className="p-4 bg-gray-700 text-white rounded-b">
+                        Ticket3 Shares allow you to fund the creators of the
+                        platform and events while also earning a small
+                        percentage of EVERY ticket purchase, based on how many
+                        shares you own. It’s like a rewards program where your
+                        support for the platform and events is recognized and
+                        rewarded.
+                    </div>
+                </div>
+                <div className="mb-4">
+                    <button className="w-full text-left text-white bg-gray-800 p-4 rounded-t">
+                        How long does it take my shares to be logged in the
+                        Ticket3 System?
+                    </button>
+                    <div className="p-4 bg-gray-700 text-white rounded-b">
+                        It takes roughly a day for your shares to be logged in
+                        the Ticket3 System, depending on when the platform is
+                        able to update the shares.
+                    </div>
+                </div>
+            </div>
         </>
     );
 };

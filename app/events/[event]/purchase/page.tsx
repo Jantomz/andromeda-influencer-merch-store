@@ -1,8 +1,7 @@
-import {} from "@/modules/collections";
-import { PurchaseTickets } from "@/modules/marketplace/components";
+import { PurchaseTickets } from "@/modules/collections";
 import {
-    CW721TicketsAddress,
     CW721EventsAddress,
+    CW721TicketsAddress,
     TicketsMarketplaceAddress,
     OwnerAddress,
 } from "@/ContractAddresses";

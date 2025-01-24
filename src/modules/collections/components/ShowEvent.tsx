@@ -397,7 +397,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                         </div>
                         {address !== OwnerAddress && (
                             <div className="w-full flex justify-center">
-                                <Link href={`${token.token_id}/purchase`}>
+                                <Link href={`${token_id}/purchase`}>
                                     <div className="px-6 py-2 mt-4 text-white bg-black border-white border rounded-md">
                                         Purchase Tickets
                                     </div>
@@ -504,7 +504,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                         }
                                                     </p>
                                                     <button
-                                                        className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                                        className="mt-2 px-4 py-2 bg-black border-white border text-white rounded-md hover:bg-gray-800"
                                                         onClick={() =>
                                                             handleSendTicketToMarketplace(
                                                                 {

@@ -7,8 +7,6 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
-import { MakeEvent } from "@/modules/admin";
-import Layout from "@/modules/general/components/Layout";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import React, { FC } from "react";
 

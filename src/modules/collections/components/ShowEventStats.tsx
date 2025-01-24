@@ -4,17 +4,9 @@ import { useQueryContract } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { useToast } from "@/hooks/use-toast";
 import {
-    Label,
-    PolarGrid,
-    PolarRadiusAxis,
-    RadialBar,
-    RadialBarChart,
-} from "recharts";
-import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -32,7 +24,7 @@ const chartConfig = {
         label: "Safari",
         color: "hsl(var(--chart-2))",
     },
-} satisfies ChartConfig;
+} as ChartConfig;
 
 const ShowEventStats: FC<ShowEventStatsProps> = (props) => {
     const { toast } = useToast();

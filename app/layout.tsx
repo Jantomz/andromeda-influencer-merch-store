@@ -6,8 +6,8 @@ import { Layout } from "@/modules/general";
 
 export const metadata: Metadata = {
     title: {
-        default: "Andromeda Nextjs Starter",
-        template: "%s | App Name",
+        default: "Ticket 3",
+        template: "%s App",
     },
 };
 

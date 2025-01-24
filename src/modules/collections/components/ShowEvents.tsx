@@ -113,7 +113,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                                 key={index}
                                 href={`/events/${token.token_id}`}
                             >
-                                <Card className="max-w-sm overflow-hidden shadow-lg my-4 p-4 bg-black">
+                                <Card className="max-w-sm overflow-hidden shadow-lg my-4 p-4 bg-black hover-bg-gray-800">
                                     <CardHeader>
                                         <img
                                             className="w-full h-48 object-cover rounded-md"
