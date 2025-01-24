@@ -12,6 +12,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { OwnerAddress } from "@/ContractAddresses";
 
 interface ShowTicketsProps {
     CW721TicketAddress: string;
@@ -41,9 +42,21 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                 return;
             }
             try {
-                const tokens = await query({ all_tokens: {} });
+                if (address === OwnerAddress) {
+                    toast({
+                        title: "Error getting tickets",
+                        description: "Owner cannot have tickets",
+                        duration: 5000,
+                        variant: "destructive",
+                    });
+                    setLoading(false);
+                    return;
+                }
+                const tokens = await query({ all_tokens: { limit: 9999 } });
 
-                const approvedTokens = await queryPOA({ all_tokens: {} });
+                const approvedTokens = await queryPOA({
+                    all_tokens: { limit: 9999 },
+                });
 
                 const tokenList = tokens.tokens;
                 const approvedTokenList = approvedTokens.tokens;

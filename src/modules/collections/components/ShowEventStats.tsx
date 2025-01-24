@@ -48,7 +48,7 @@ const ShowEventStats: FC<ShowEventStatsProps> = (props) => {
                 return;
             }
             try {
-                const tokens = await query({ all_tokens: {} });
+                const tokens = await query({ all_tokens: { limit: 9999 } });
 
                 const tokenList = tokens.tokens;
                 setChartData([

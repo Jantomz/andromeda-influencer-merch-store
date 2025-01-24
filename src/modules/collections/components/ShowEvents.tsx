@@ -50,7 +50,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                 return;
             }
             try {
-                const tokens = await query({ all_tokens: {} });
+                const tokens = await query({ all_tokens: { limit: 9999 } });
 
                 const tokenList = tokens.tokens;
 
@@ -65,13 +65,21 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
 
                     const metadata = await response.json();
 
-                    const tokenData = {
-                        token_id: tokenList[i],
-                        owner: token.access.owner,
-                        metadata: metadata,
-                    };
+                    const hasValidEndDate = metadata.attributes.some(
+                        (attribute: any) =>
+                            attribute.trait_type === "endDate" &&
+                            new Date(attribute.value) >= new Date()
+                    );
 
-                    tempTokenList.push(tokenData);
+                    if (hasValidEndDate) {
+                        const tokenData = {
+                            token_id: tokenList[i],
+                            owner: token.access.owner,
+                            metadata: metadata,
+                        };
+
+                        tempTokenList.push(tokenData);
+                    }
                 }
 
                 setTokens(tempTokenList);
@@ -180,3 +188,4 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
     );
 };
 export default ShowEvents;
+</div></Link>

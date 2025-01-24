@@ -32,7 +32,7 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
         }
 
         const tokens = await query({
-            all_tokens: {},
+            all_tokens: { limit: 9999 },
         });
 
         if (tokens.tokens.length > 0) {

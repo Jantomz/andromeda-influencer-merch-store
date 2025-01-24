@@ -129,8 +129,19 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             );
             setGraphData(graphData);
 
-            const isConfigSame =
-                JSON.stringify(currentConfig) === JSON.stringify(correctConfig);
+            const isConfigSame = currentConfig.every(
+                (current: any, index: number) => {
+                    const correct = correctConfig[index];
+                    return (
+                        current.recipient.address ===
+                            correct.recipient.address &&
+                        parseFloat(current.percent) ===
+                            parseFloat(correct.percent)
+                    );
+                }
+            );
+            console.log(JSON.stringify(currentConfig));
+            console.log(JSON.stringify(correctConfig));
             if (!isConfigSame) {
                 setSharesUpdated(false);
             } else {
