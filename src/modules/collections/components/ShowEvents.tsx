@@ -75,6 +75,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                 }
 
                 setTokens(tempTokenList);
+                setFilteredTokens(tempTokenList);
                 setLoading(false);
             } catch (error) {
                 toast({
@@ -108,7 +109,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                             <input
                                 type="text"
                                 placeholder="Search events by name"
-                                className="w-full p-2 rounded-md border border-gray-300"
+                                className="w-full p-2 rounded-md border border-gray-300 bg-black text-white"
                                 onChange={(e) => {
                                     const searchTerm =
                                         e.target.value.toLowerCase();
