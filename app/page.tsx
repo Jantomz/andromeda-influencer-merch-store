@@ -78,15 +78,17 @@ const Page = async (props: Props) => {
                         knowing that secure, one-of-a-kind tickets were a rarity
                         in an industry plagued with counterfeits. This challenge
                         sparked an idea—an idea to bring the power of Web3 to
-                        the ticketing world. And that's how Ticket3 was born.
+                        the ticketing world. And that&rsquo;s how Ticket3 was
+                        born.
                     </p>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
                         In our mission to create a more secure and transparent
                         way to host and manage tickets, we realized that the use
                         of blockchain technology could make the ticketing
                         process not only safer but also more efficient. Thus,
-                        Ticket3 isn’t just a platform; it's a revolution in how
-                        events are managed, and how patrons trust their tickets.
+                        Ticket3 isn’t just a platform; it&rsquo;s a revolution
+                        in how events are managed, and how patrons trust their
+                        tickets.
                     </p>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
                         But we knew we couldn’t do this alone. We wanted to
@@ -102,7 +104,7 @@ const Page = async (props: Props) => {
                     </h3>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
                         First things first, in order to fully enjoy the benefits
-                        of Ticket3, you'll need to connect your{" "}
+                        of Ticket3, you&rsquo;ll need to connect your{" "}
                         <strong>Keplr Wallet</strong>. This is how you’ll
                         interact with the blockchain. Be sure to set it to the{" "}
                         <strong>Andromeda Testnet</strong>. You’ll know you’re
@@ -124,11 +126,11 @@ const Page = async (props: Props) => {
                         3. App Stability Warning
                     </h3>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
-                        A quick note: while we're making great strides with
-                        Ticket3, the app is still in active development. We’ve
-                        done our best to build thorough error handling, but{" "}
-                        <strong>malicious attack protection</strong> isn’t yet
-                        fully implemented. For now, please use the app with
+                        A quick note: while we&rsquo;re making great strides
+                        with Ticket3, the app is still in active development.
+                        We’ve done our best to build thorough error handling,
+                        but <strong>malicious attack protection</strong> isn’t
+                        yet fully implemented. For now, please use the app with
                         caution and be patient with transaction processing—some
                         features may take a moment to load or update, but rest
                         assured, the system is working to make sure everything
@@ -138,36 +140,36 @@ const Page = async (props: Props) => {
                         4. Browse Events
                     </h3>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
-                        Once you're ready, head over to the{" "}
+                        Once you&rsquo;re ready, head over to the{" "}
                         <strong>Events</strong> tab to browse a list of
                         available events. Here, you can check out upcoming
-                        events, explore their details, and decide where you'd
-                        like to be part of the action. This is the starting
-                        point for attendees and admins alike.
+                        events, explore their details, and decide where
+                        you&rsquo;d like to be part of the action. This is the
+                        starting point for attendees and admins alike.
                     </p>
                     <h3 className="text-3xl max-md:text-2xl font-semibold w-full max-md:w-3/4">
                         5. For Admins: Manage Tickets
                     </h3>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
                         For event <strong>admins</strong>, you get special
-                        control over your events. On the event info page, you'll
-                        be able to view all the sellable tickets for your event.
-                        If you’re ready to let people purchase, you can send
-                        those tickets to the marketplace where others can buy
-                        them. This ensures that tickets are available for the
-                        right people, at the right time.
+                        control over your events. On the event info page,
+                        you&rsquo;ll be able to view all the sellable tickets
+                        for your event. If you’re ready to let people purchase,
+                        you can send those tickets to the marketplace where
+                        others can buy them. This ensures that tickets are
+                        available for the right people, at the right time.
                     </p>
                     <h3 className="text-3xl max-md:text-2xl font-semibold w-full max-md:w-3/4">
                         6. Purchasing Tickets (For Users)
                     </h3>
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
-                        If you're a <strong>patron</strong> looking to attend an
-                        event, you can easily browse the event info page and
-                        find the option to <strong>buy tickets</strong>. Simply
-                        select your desired ticket type and proceed to checkout.
-                        Whether you’re a first-time user or a seasoned attendee,
-                        purchasing your ticket will always be a secure and
-                        seamless process.
+                        If you&rsquo;re a <strong>patron</strong> looking to
+                        attend an event, you can easily browse the event info
+                        page and find the option to <strong>buy tickets</strong>
+                        . Simply select your desired ticket type and proceed to
+                        checkout. Whether you’re a first-time user or a seasoned
+                        attendee, purchasing your ticket will always be a secure
+                        and seamless process.
                     </p>
                     <h3 className="text-3xl max-md:text-2xl font-semibold w-full max-md:w-3/4">
                         7. Events Wallet
@@ -175,9 +177,9 @@ const Page = async (props: Props) => {
                     <p className="text-lg max-md:text-base w-full max-md:w-3/4">
                         Once you’ve made your purchases, head to the{" "}
                         <strong>Events Wallet</strong> tab. This is where your
-                        tickets are stored. It's like your personal event ticket
-                        vault, ensuring easy access whenever you need it. No
-                        more scrambling for email confirmations or printing
+                        tickets are stored. It&rsquo;s like your personal event
+                        ticket vault, ensuring easy access whenever you need it.
+                        No more scrambling for email confirmations or printing
                         paper tickets—your tickets are right there, secured on
                         the blockchain.
                     </p>
@@ -277,8 +279,8 @@ const Page = async (props: Props) => {
                         All of these features come together to create a better,
                         more secure way of managing events and tickets in the
                         digital age. By leveraging the power of blockchain,
-                        we're not just reducing fraud; we’re building a more
-                        trustworthy, transparent ticketing ecosystem for
+                        we&rsquo;re not just reducing fraud; we’re building a
+                        more trustworthy, transparent ticketing ecosystem for
                         everyone—organizers, attendees, and even shareholders.
                     </p>
                 </div>
