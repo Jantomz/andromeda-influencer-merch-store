@@ -1,19 +1,17 @@
 // src/AddressConstants.jsx
-
-export const OwnerAddress = "andr1eq2npynjfyx52utu34kht3p5vhp3yflt4qr2gx";
+// TODO: Update the addresses below with the actual addresses of the deployed contracts
+export const OwnerAddress = "andr1zgs0kv5snpfrt7d63nau6lu59aevmkhpyw06de";
 export const CW721EventsAddress =
-    "andr1zmsh5cdv42nunkx4z3enfs0uyn2sxz82qtfkfwuslvzkmhmtennql5a6tn";
+    "andr1hm7tadlrwnaedm240mc9mzkmkfrfljw7cnum8s6xel5mqym5j3xsezhhzq";
 export const CW721SharesAddress =
-    "andr1qhndf3kcpqxqxc33p042wae6d95svr5an292wt765n8jxq2wccgq0vyldt";
+    "andr15gt9h9wqdm4tzcj8s20jnfzkvv2vmsuk4wxaumkgnq6cvxkdngeqh2cy9w";
 export const CW721TicketsAddress =
-    "andr1t5rfxzn207pw83562dx6r3esfe3m4wcc49gyldxuydnh8mp79mysj2hcqk";
+    "andr15uu78smm5jjmkae4lnlfnr5fwu845e2jhtfqkdm0lpnwk83ksv8snpplq2";
 export const CW721POAAddress =
-    "andr1eajtel5wh0h7atyy35t2h45sr32n38w2e3nvjdd0fz8maz6hpmks2de4df";
+    "andr14xyfr2k8hhpchdy8vpwh25ypd2ttuhss2q9u4rr40qn7vk3zzdns6n2fyl";
 export const TicketsMarketplaceAddress =
-    "andr13kr2jfd9a6j9qq5eevaxdkzljw04uzrftactfzea2e7pldpu7lkqe6l9mk";
-export const EventsMarketplaceAddress =
-    "andr1rgs4dtnttrhwhxcsxdqzppnkt2y4vtpxlyh8tf8rhm6kp86a9wps4rxesz";
+    "andr1fluumm75lpmjq5eegvsft4m4vplxlqn2q8w6kcxtpzqmckm0c54q3tanpp";
 export const SharesMarketplaceAddress =
-    "andr1ld0mdudnnkt9vh8zcwqt0a6qc8wvmjh927j8y8kjy6zcn0skhdds78pkd5";
+    "andr1qzm0kkelmgpupvx3hza8aacajj4nd5pwpeycew9xpqv3y5kgs3kq3y2hpd";
 export const SplitterAddress =
-    "andr13u9j2c65yqd0a06vfx37ywc5x9dqzly4pwzlk2ys5d9jjxsewhuqm87x7t";
+    "andr1np5fksrh6v70jy63jqj9rdz2ke2uev5cmthu8zkn94se3egn6zuq3luntu";
