@@ -16,7 +16,7 @@ const Page = async (props: Props) => {
                 <h2 className="z-40 text-3xl max-md:text-2xl font-semibold w-1/2 max-md:w-3/4 text-center text-white">
                     Ticket3
                 </h2>
-                <h2 className="z-40 text-3xl max-md:text-2xl font-semibold w-1/2 max-md:w-3/4 text-center text-white">
+                <h2 className="z-40 text-sm max-md:text-2xl font-semibold w-1/2 max-md:w-3/4 text-center text-white hover:text-gray-200">
                     <a
                         href="https://github.com/Jantomz/andromeda-ticket-3"
                         target="_blank"
