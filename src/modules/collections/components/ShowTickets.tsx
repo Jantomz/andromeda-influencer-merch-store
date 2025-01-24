@@ -4,12 +4,14 @@ import { useQueryContract } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import Link from "next/link";
 import { useAndromedaStore } from "@/zustand/andromeda";
+import { useToast } from "@/hooks/use-toast";
 
 interface ShowTicketsProps {
     CW721TicketAddress: string;
     CW721POAAddress: string;
 }
 const ShowTickets: FC<ShowTicketsProps> = (props) => {
+    const { toast } = useToast();
     const { CW721TicketAddress, CW721POAAddress } = props;
     const client = useAndromedaClient();
     // TODO: Fix any
@@ -104,6 +106,14 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                 setTokens(tempTokenList);
                 setLoading(false);
             } catch (error) {
+                toast({
+                    title: "Error getting tickets",
+                    description: "There was an error getting tickets",
+                    duration: 5000,
+                    variant: "destructive",
+                });
+                setLoading(false);
+
                 console.error("Error querying contract:", error);
             }
         };

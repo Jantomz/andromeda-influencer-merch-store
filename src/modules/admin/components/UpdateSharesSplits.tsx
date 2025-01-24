@@ -6,10 +6,10 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
-import { MakeEvent } from "@/modules/admin";
-import Layout from "@/modules/general/components/Layout";
+import { SharesGraph } from "@/modules/admin";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import React, { FC, useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface UpdateSharesSplitsProps {
     SplitterAddress: string;
@@ -19,6 +19,8 @@ interface UpdateSharesSplitsProps {
 }
 
 const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
+    const { toast } = useToast();
+
     const {
         SplitterAddress,
         CW721SharesAddress,
@@ -31,6 +33,8 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
     const simulateSplitter = useSimulateExecute(SplitterAddress);
     const queryShares = useQueryContract(CW721SharesAddress);
     const querySplitter = useQueryContract(SplitterAddress);
+
+    const [graphData, setGraphData] = useState<any[]>([]);
 
     const [sharesProcessed, setSharesProcessed] = useState(0);
     const [sharesLength, setSharesLength] = useState(0);
@@ -55,68 +59,103 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
 
         let count = 0;
 
-        for (const token of shares.tokens) {
-            const shareInfo = await queryShares({
-                all_nft_info: {
-                    token_id: token,
-                },
+        try {
+            for (const token of shares.tokens) {
+                const shareInfo = await queryShares({
+                    all_nft_info: {
+                        token_id: token,
+                    },
+                });
+
+                tempSharesList.push(shareInfo);
+                count += 1;
+                setSharesProcessed(count);
+            }
+
+            const sharesCount: { [address: string]: number } = {};
+
+            for (const share of tempSharesList) {
+                let ownerAddress = share.access.owner;
+                if (ownerAddress === MarketplaceAddress) {
+                    ownerAddress = OwnerAddress;
+                }
+                if (sharesCount[ownerAddress]) {
+                    sharesCount[ownerAddress] += 1;
+                } else {
+                    sharesCount[ownerAddress] = 1;
+                }
+            }
+            const totalShares = Object.values(sharesCount).reduce(
+                (a, b) => a + b,
+                0
+            );
+
+            const updatedRecipients = Object.entries(sharesCount).map(
+                ([address, count]) => ({
+                    recipient: {
+                        address,
+                        msg: null,
+                        ibc_recovery_address: null,
+                    },
+                    percent: (count / totalShares).toFixed(2),
+                })
+            );
+
+            const splitterConfig = await querySplitter({
+                get_splitter_config: {},
             });
 
-            tempSharesList.push(shareInfo);
-            count += 1;
-            setSharesProcessed(count);
-        }
+            console.log(updatedRecipients);
+            console.log(splitterConfig.config.recipients);
+            const currentConfig = splitterConfig.config.recipients;
+            const correctConfig = updatedRecipients;
 
-        const sharesCount: { [address: string]: number } = {};
+            const graphData = currentConfig.map(
+                (recipient: {
+                    recipient: { address: string };
+                    percent: string;
+                }) => ({
+                    name:
+                        recipient.recipient.address.slice(0, 6) +
+                        "......" +
+                        recipient.recipient.address.slice(
+                            recipient.recipient.address.length - 4
+                        ),
+                    value: parseFloat(recipient.percent),
+                })
+            );
+            setGraphData(graphData);
 
-        for (const share of tempSharesList) {
-            let ownerAddress = share.access.owner;
-            if (ownerAddress === MarketplaceAddress) {
-                ownerAddress = OwnerAddress;
-            }
-            if (sharesCount[ownerAddress]) {
-                sharesCount[ownerAddress] += 1;
+            console.log(JSON.stringify(currentConfig));
+            console.log(JSON.stringify(correctConfig));
+
+            const isConfigSame =
+                JSON.stringify(currentConfig) === JSON.stringify(correctConfig);
+            console.log(isConfigSame);
+            if (!isConfigSame) {
+                setSharesUpdated(false);
             } else {
-                sharesCount[ownerAddress] = 1;
+                setSharesUpdated(true);
             }
+            setLoading(false);
+            setSharesLength(0);
+            setSharesProcessed(0);
+            toast({
+                title: "Shares Loaded",
+                description: "Shares update-ability has been checked",
+                duration: 5000,
+            });
+        } catch (error) {
+            toast({
+                title: "Error getting shares",
+                description: "There was an error getting shares",
+                duration: 5000,
+                variant: "destructive",
+            });
+
+            console.error("Error querying contract:", error);
+            setLoading(false);
         }
-        const totalShares = Object.values(sharesCount).reduce(
-            (a, b) => a + b,
-            0
-        );
-
-        const updatedRecipients = Object.entries(sharesCount).map(
-            ([address, count]) => ({
-                recipient: {
-                    address,
-                    msg: null,
-                    ibc_recovery_address: null,
-                },
-                percent: (count / totalShares).toFixed(2),
-            })
-        );
-
-        const splitterConfig = await querySplitter({
-            get_splitter_config: {},
-        });
-
-        console.log(updatedRecipients);
-        console.log(splitterConfig.config.recipients);
-        const currentConfig = splitterConfig.config.recipients;
-        const correctConfig = updatedRecipients;
-
-        console.log(JSON.stringify(currentConfig));
-        console.log(JSON.stringify(correctConfig));
-
-        const isConfigSame =
-            JSON.stringify(currentConfig) === JSON.stringify(correctConfig);
-        console.log(isConfigSame);
-        if (!isConfigSame) {
-            setSharesUpdated(false);
-        } else {
-            setSharesUpdated(true);
-        }
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -233,34 +272,41 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
 
         setSharesLength(0);
         setSharesProcessed(0);
+        setSharesUpdated(true);
         setLoading(false);
+        toast({
+            title: "Shares Splits Updated",
+            description: "Shares splits have been updated",
+            duration: 5000,
+        });
     };
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 border rounded shadow-md">
+        <div className="flex flex-col items-center justify-center p-6  ">
             {loading ? (
-                <div className="flex items-center justify-center space-x-2">
-                    <div className="w-4 h-4 rounded-full animate-spin border-2 border-t-2 border-gray-200 border-t-blue-500"></div>
-                    <div className="text-lg font-medium text-gray-700">
+                <div className="flex items-center justify-center space-x-3">
+                    <div className="w-5 h-5 border-4 border-t-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                    <div className="text-lg font-semibold text-gray-600">
                         Loading...
                     </div>
                 </div>
             ) : (
-                <button
-                    onClick={() => handleUpdateSharesSplits()}
-                    className={`px-4 py-2 rounded text-white ${
-                        sharesUpdated
-                            ? "bg-green-500 hover:bg-green-700"
-                            : "bg-red-500 hover:bg-red-700"
-                    }`}
-                >
-                    {sharesUpdated
-                        ? "Shares are Up-to-date"
-                        : "Update Share Splits"}
-                </button>
+                <>
+                    <SharesGraph data={graphData} />
+                    {!sharesUpdated && (
+                        <button
+                            onClick={() => handleUpdateSharesSplits()}
+                            disabled={sharesUpdated}
+                            className={`mt-4 px-5 py-2.5 rounded-lg text-white text-sm transition-colors duration-300
+                                bg-red-400 hover:bg-red-600`}
+                        >
+                            Update share splits
+                        </button>
+                    )}
+                </>
             )}
             {sharesLength > 0 && (
-                <p className="mt-4 text-lg">
+                <p className="mt-4 text-lg text-gray-700">
                     Shares Processed: {sharesProcessed}/{sharesLength}
                 </p>
             )}

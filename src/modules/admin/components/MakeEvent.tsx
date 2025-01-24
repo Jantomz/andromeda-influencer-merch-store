@@ -3,6 +3,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useExecuteContract, useSimulateExecute } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { useAndromedaStore } from "@/zustand/andromeda";
+import { useToast } from "@/hooks/use-toast";
 
 interface MakeEventProps {
     CW721Address: string;
@@ -10,6 +11,8 @@ interface MakeEventProps {
 }
 
 const MakeEvent: FC<MakeEventProps> = (props) => {
+    const { toast } = useToast();
+
     const client = useAndromedaClient();
     const eventCW721 = props.CW721Address;
     const ticketCW721 = props.TicketCW721Address;
@@ -61,233 +64,223 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
             return;
         }
 
-        //         proxy_message
-        // :
-        // msg
-        // :
-        // "ewptaW50OiB7CnRva2VuX2lkOiAiVGVzdGluZyBQcm94eSIsCmV4dGVuc2lvbjogewogICAgICAgICAgICAgICAgICAgICAgICBwdWJsaXNoZXI6ICJBcHAgRGV2ZWxvcGVyIiwKICAgICAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgICAgIG93bmVyOiAiYW5kcjFlcTJucHluamZ5eDUydXR1MzRraHQzcDV2aHAzeWZsdDRxcjJneCIsCn0KfQ=="
-        // name
-        // :
-        // "events"
-
-        // {
-        //     mint: {
-        //         token_id: "Testing Proxy",
-        //         extension: {
-        //             publisher: "App Developer",
-        //         },
-        //         owner: "andr1eq2npynjfyx52utu34kht3p5vhp3yflt4qr2gx",
-        //         token_uri: null,
-        //     },
-        // }
-
-        const result = await simulate(
-            {
-                mint: {
-                    token_id: t_id,
-                    extension: {
-                        // TODO: Change this
-                        publisher: "App Developer",
-                    },
-                    owner: userAddress,
-                    token_uri: m_uri,
-                },
-            },
-            [{ denom: "uandr", amount: "500000" }]
-        );
-
-        const data = await execute(
-            {
-                mint: {
-                    token_id: t_id,
-                    extension: {
-                        publisher: "App Developer",
-                    },
-                    owner: userAddress,
-                    token_uri: m_uri,
-                },
-            },
-            {
-                amount: [
-                    {
-                        denom: result.amount[0].denom,
-                        amount: result.amount[0].amount,
-                    },
-                ],
-                gas: result.gas,
-            }
-        );
-
-        console.log("data", data);
-
-        if (!data.gasUsed) {
-            return;
-        }
-
-        const dbResult = await fetch("/api/event-metadata", {
-            method: "POST",
-            body: JSON.stringify({
-                token_id: t_id,
-                name: n,
-                description: d,
-                image: i,
-                attributes: [
-                    {
-                        display_type: "Start Date",
-                        trait_type: "dateStart",
-                        value: d_start,
-                    },
-                    {
-                        display_type: "End Date",
-                        trait_type: "dateEnd",
-                        value: d_end,
-                    },
-                    {
-                        display_type: "Location",
-                        trait_type: "location",
-                        value: l,
-                    },
-                    {
-                        display_type: "Ticket Tiers",
-                        trait_type: "tiers",
-                        value: tiers,
-                    },
-                ],
-            }),
-        });
-
-        console.log(dbResult);
-        // TODO: show toast
-
-        // Mint Tickets
-        for (const tier of tiers) {
-            const batchSize = 100;
-            for (
-                let batchStart = 0;
-                batchStart < tier.amount;
-                batchStart += batchSize
-            ) {
-                const batchEnd = Math.min(batchStart + batchSize, tier.amount);
-                const batchTokens = Array.from({
-                    length: batchEnd - batchStart,
-                }).map((_, i) => ({
-                    token_id: `${t_id}-ticket-${tier.title}-${batchStart + i}`,
-                    extension: {
-                        // TODO: Change this
-                        publisher: "App Developer",
-                    },
-                    owner: userAddress,
-                    token_uri:
-                        baseURL +
-                        `/api/tickets-metadata?token_id=${t_id}-ticket-${tier.title}-${batchStart + i}`,
-                }));
-
-                const ticketResult = await simulateTicket(
-                    {
-                        batch_mint: {
-                            tokens: batchTokens,
+        try {
+            const result = await simulate(
+                {
+                    mint: {
+                        token_id: t_id,
+                        extension: {
+                            // TODO: Change this
+                            publisher: "App Developer",
                         },
+                        owner: userAddress,
+                        token_uri: m_uri,
                     },
-                    [
+                },
+                [{ denom: "uandr", amount: "500000" }]
+            );
+
+            const data = await execute(
+                {
+                    mint: {
+                        token_id: t_id,
+                        extension: {
+                            publisher: "App Developer",
+                        },
+                        owner: userAddress,
+                        token_uri: m_uri,
+                    },
+                },
+                {
+                    amount: [
                         {
-                            denom: tier.denom,
-                            amount: (tier.price * 100).toString(),
+                            denom: result.amount[0].denom,
+                            amount: result.amount[0].amount,
                         },
-                    ]
-                );
+                    ],
+                    gas: result.gas,
+                }
+            );
 
-                const ticketData = await executeTicket(
-                    {
-                        batch_mint: {
-                            tokens: batchTokens,
+            console.log("data", data);
+
+            if (!data.gasUsed) {
+                return;
+            }
+
+            const dbResult = await fetch("/api/event-metadata", {
+                method: "POST",
+                body: JSON.stringify({
+                    token_id: t_id,
+                    name: n,
+                    description: d,
+                    image: i,
+                    attributes: [
+                        {
+                            display_type: "Start Date",
+                            trait_type: "dateStart",
+                            value: d_start,
                         },
-                    },
-                    {
-                        amount: [
-                            {
-                                denom: ticketResult.amount[0].denom,
-                                amount: ticketResult.amount[0].amount,
+                        {
+                            display_type: "End Date",
+                            trait_type: "dateEnd",
+                            value: d_end,
+                        },
+                        {
+                            display_type: "Location",
+                            trait_type: "location",
+                            value: l,
+                        },
+                        {
+                            display_type: "Ticket Tiers",
+                            trait_type: "tiers",
+                            value: tiers,
+                        },
+                    ],
+                }),
+            });
+
+            console.log(dbResult);
+            // TODO: show toast
+
+            // Mint Tickets
+            for (const tier of tiers) {
+                const batchSize = 100;
+                for (
+                    let batchStart = 0;
+                    batchStart < tier.amount;
+                    batchStart += batchSize
+                ) {
+                    const batchEnd = Math.min(
+                        batchStart + batchSize,
+                        tier.amount
+                    );
+                    const batchTokens = Array.from({
+                        length: batchEnd - batchStart,
+                    }).map((_, i) => ({
+                        token_id: `${t_id}-ticket-${tier.title}-${batchStart + i}`,
+                        extension: {
+                            // TODO: Change this
+                            publisher: "App Developer",
+                        },
+                        owner: userAddress,
+                        token_uri:
+                            baseURL +
+                            `/api/tickets-metadata?token_id=${t_id}-ticket-${tier.title}-${batchStart + i}`,
+                    }));
+
+                    const ticketResult = await simulateTicket(
+                        {
+                            batch_mint: {
+                                tokens: batchTokens,
                             },
-                        ],
-                        gas: ticketResult.gas,
-                    }
-                );
+                        },
+                        [
+                            {
+                                denom: tier.denom,
+                                amount: (tier.price * 100).toString(),
+                            },
+                        ]
+                    );
 
-                const dbTicketResult = await fetch("/api/tickets-metadata", {
-                    method: "POST",
-                    body: JSON.stringify(
-                        batchTokens.map((token) => ({
-                            token_id: token.token_id,
-                            name: `${tier.title} Ticket for ${n}`,
-                            description: `Admit one ${tier.title} to ${n} on ${d_start} at ${l} for ${tier.price} ${tier.denom}`,
-                            image: tier.image,
-                            attributes: [
+                    const ticketData = await executeTicket(
+                        {
+                            batch_mint: {
+                                tokens: batchTokens,
+                            },
+                        },
+                        {
+                            amount: [
                                 {
-                                    display_type: "Tier",
-                                    trait_type: "tier",
-                                    value: tier.title,
-                                },
-                                {
-                                    display_type: "Perks",
-                                    trait_type: "perks",
-                                    value: tier.perks,
-                                },
-                                {
-                                    display_type: "Price",
-                                    trait_type: "price",
-                                    value: tier.price,
-                                },
-                                {
-                                    display_type: "Denom",
-                                    trait_type: "denom",
-                                    value: tier.denom,
-                                },
-                                {
-                                    display_type: "Event",
-                                    trait_type: "event",
-                                    value: n,
-                                },
-                                {
-                                    display_type: "Start Date",
-                                    trait_type: "dateStart",
-                                    value: d_start,
-                                },
-                                {
-                                    display_type: "End Date",
-                                    trait_type: "dateEnd",
-                                    value: d_end,
-                                },
-                                {
-                                    display_type: "Location",
-                                    trait_type: "location",
-                                    value: l,
+                                    denom: ticketResult.amount[0].denom,
+                                    amount: ticketResult.amount[0].amount,
                                 },
                             ],
-                        }))
-                    ),
-                });
+                            gas: ticketResult.gas,
+                        }
+                    );
 
-                console.log(dbTicketResult);
+                    const dbTicketResult = await fetch(
+                        "/api/tickets-metadata",
+                        {
+                            method: "POST",
+                            body: JSON.stringify(
+                                batchTokens.map((token) => ({
+                                    token_id: token.token_id,
+                                    name: `${tier.title} Ticket for ${n}`,
+                                    description: `Admit one ${tier.title} to ${n} on ${d_start} at ${l} for ${tier.price} ${tier.denom}`,
+                                    image: tier.image,
+                                    attributes: [
+                                        {
+                                            display_type: "Tier",
+                                            trait_type: "tier",
+                                            value: tier.title,
+                                        },
+                                        {
+                                            display_type: "Perks",
+                                            trait_type: "perks",
+                                            value: tier.perks,
+                                        },
+                                        {
+                                            display_type: "Price",
+                                            trait_type: "price",
+                                            value: tier.price,
+                                        },
+                                        {
+                                            display_type: "Denom",
+                                            trait_type: "denom",
+                                            value: tier.denom,
+                                        },
+                                        {
+                                            display_type: "Event",
+                                            trait_type: "event",
+                                            value: n,
+                                        },
+                                        {
+                                            display_type: "Start Date",
+                                            trait_type: "dateStart",
+                                            value: d_start,
+                                        },
+                                        {
+                                            display_type: "End Date",
+                                            trait_type: "dateEnd",
+                                            value: d_end,
+                                        },
+                                        {
+                                            display_type: "Location",
+                                            trait_type: "location",
+                                            value: l,
+                                        },
+                                    ],
+                                }))
+                            ),
+                        }
+                    );
 
-                console.log("ticketData", ticketData);
+                    console.log(dbTicketResult);
+
+                    console.log("ticketData", ticketData);
+                }
             }
+            setIsLoading(false);
+            toast({
+                title: "Event Created",
+                description: "Your event has been created successfully.",
+                duration: 5000,
+            });
+
+            window.location.href = "/";
+        } catch (error) {
+            toast({
+                title: "Error making event",
+                description: "There was an error making event",
+                duration: 5000,
+                variant: "destructive",
+            });
+
+            console.error("Error minting event:", error);
+            setIsLoading(false);
         }
-        setIsLoading(false);
-
-        // send_nft
-        //         contract
-        // :
-        // "andr13kr2jfd9a6j9qq5eevaxdkzljw04uzrftactfzea2e7pldpu7lkqe6l9mk"
-        // msg
-        // :
-        // "eyJzdGFydF9zYWxlIjp7ImNvaW5fZGVub20iOnsibmF0aXZlX3Rva2VuIjoidWFuZHIifSwicmVjaXBpZW50IjpudWxsLCJzdGFydF90aW1lIjpudWxsLCJkdXJhdGlvbiI6bnVsbCwicHJpY2UiOiI1MDAifX0="
-        // token_id
-        // :
-        // "canada-national-super-spelling-bee-ticket-Speller-0"
-
-        // the msg is base64 encoded with the price changing the code
-
-        window.location.href = "/";
     };
 
     if (!client) {

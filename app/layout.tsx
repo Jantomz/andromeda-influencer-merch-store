@@ -1,8 +1,6 @@
 import React, { ReactNode } from "react";
 import Providers from "./providers";
 import { Metadata } from "next";
-import PoweredByLogo from "@/modules/ui/PoweredByLogo";
-import { Navbar } from "@/modules/general";
 import "@/styles/globals.css";
 import Layout from "@/modules/general/components/Layout";
 
@@ -24,7 +22,7 @@ const RootLayout = async (props: Props) => {
         <html lang="en">
             <body>
                 <Providers>
-                    <Layout>{children} </Layout>
+                    <Layout>{children}</Layout>
                 </Providers>
             </body>
         </html>

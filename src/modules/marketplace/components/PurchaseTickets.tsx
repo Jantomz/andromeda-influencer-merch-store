@@ -6,6 +6,15 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
+import { useToast } from "@/hooks/use-toast";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 
 interface PurchaseTicketsProps {
     CW721Address: string;
@@ -15,6 +24,8 @@ interface PurchaseTicketsProps {
     OwnerAddress: string;
 }
 const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
+    const { toast } = useToast();
+
     const { CW721Address, CW721TicketAddress, token_id, MarketplaceAddress } =
         props;
     const client = useAndromedaClient();
@@ -93,6 +104,14 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
             setToken(tokenData);
             setLoading(false);
         } catch (error) {
+            toast({
+                title: "Error getting tickets",
+                description: "There was an error getting tickets",
+                duration: 5000,
+                variant: "destructive",
+            });
+            setLoading(false);
+
             console.error("Error querying contract:", error);
         }
     };
@@ -170,8 +189,21 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                 ]
             );
 
+            toast({
+                title: "Ticket Purchased",
+                description: "You have successfully purchased a ticket",
+                duration: 5000,
+            });
+
             fetchData();
         } catch (error) {
+            toast({
+                title: "Error purchasing ticket",
+                description: "There was an error purchasing a ticket",
+                duration: 5000,
+                variant: "destructive",
+            });
+
             console.error("Error purchasing ticket:", error);
         }
     };
@@ -179,7 +211,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
     return (
         <>
             {loading ? (
-                <div className="text-center text-2xl mt-4">
+                <div className="text-center text-2xl mt-4 text-white">
                     <div className="flex justify-center items-center space-x-2">
                         <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
                         <span>Loading...</span>
@@ -187,288 +219,123 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                 </div>
             ) : (
                 token && (
-                    <div className="max-w-4xl mx-auto rounded overflow-hidden shadow-lg my-8 p-6 bg-white">
+                    <div className="max-w-4xl mx-auto rounded overflow-hidden shadow-lg my-8 p-6 bg-black">
                         <img
                             className="w-full h-96 object-cover rounded-md"
                             src={token.metadata.image}
                             alt={token.metadata.name}
                             onError={(e) => {
                                 e.currentTarget.src =
-                                    "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
+                                    "https://via.placeholder.com/300";
                             }}
                         />
 
                         <div className="px-8 py-6">
-                            <div className="font-bold text-3xl mb-4 text-center">
+                            <div className="font-bold text-3xl mb-4 text-center text-white">
                                 {token.metadata.name}
                             </div>
-                            <p className="text-gray-700 text-lg text-center mb-6">
+                            <p className="text-gray-300 text-lg text-center mb-6">
                                 {token.metadata.description}
                             </p>
                         </div>
-                        <div className="px-8 py-4 flex justify-between items-center">
-                            <p className="text-gray-600 text-sm">
-                                <span className="font-semibold">Token ID:</span>{" "}
-                                {token.token_id}
-                            </p>
-                            <p className="text-gray-600 text-sm">
-                                <span className="font-semibold">Owner:</span>{" "}
-                                {token.owner}
-                            </p>
-                        </div>
-                        <div className="px-8 py-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                {token.metadata.attributes.map(
-                                    (attribute: any, index: number) => {
-                                        if (
-                                            typeof attribute.value === "string"
-                                        ) {
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className="text-gray-700"
-                                                >
-                                                    <span className="font-semibold">
-                                                        {attribute.display_type}
-                                                    </span>
-                                                    : {attribute.value}
-                                                </div>
-                                            );
-                                        } else if (
-                                            attribute.trait_type === "tiers" &&
-                                            Array.isArray(attribute.value)
-                                        ) {
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    className="text-gray-700 col-span-2"
-                                                >
-                                                    <span className="font-semibold text-xl">
-                                                        Ticket Tiers
-                                                    </span>
-                                                    <div className="mt-2">
-                                                        {attribute.value
-                                                            .sort(
-                                                                (
-                                                                    a: any,
-                                                                    b: any
-                                                                ) =>
-                                                                    a.price -
-                                                                    b.price
-                                                            )
-                                                            .map(
-                                                                (
-                                                                    tier: any,
-                                                                    tierIndex: number
-                                                                ) => (
-                                                                    <div
-                                                                        key={
-                                                                            tierIndex
-                                                                        }
-                                                                        className={`border p-4 rounded-md mb-4 ${
-                                                                            tierIndex ===
-                                                                            0
-                                                                                ? "bg-yellow-200"
-                                                                                : tierIndex ===
-                                                                                    1
-                                                                                  ? "bg-gray-400"
-                                                                                  : tierIndex ===
-                                                                                      3
-                                                                                    ? "bg-amber-600"
-                                                                                    : "bg-white"
-                                                                        }`}
-                                                                    >
-                                                                        <div className="font-semibold text-lg">
-                                                                            {
-                                                                                tier.title
-                                                                            }
-                                                                        </div>
-                                                                        <div className="text-sm">
-                                                                            {
-                                                                                buyableTiersTicketsList.find(
-                                                                                    (
-                                                                                        t
-                                                                                    ) =>
-                                                                                        t.title ===
-                                                                                        tier.title
-                                                                                )
-                                                                                    ?.tickets
-                                                                                    .length
-                                                                            }
-                                                                            /
-                                                                            {
-                                                                                tier.amount
-                                                                            }{" "}
-                                                                            tickets
-                                                                            left
-                                                                        </div>
-                                                                        <p>
-                                                                            <span className="font-semibold">
-                                                                                Amount:
-                                                                            </span>{" "}
-                                                                            {
-                                                                                tier.amount
-                                                                            }
-                                                                        </p>
-                                                                        <p>
-                                                                            <span className="font-semibold">
-                                                                                Denom:
-                                                                            </span>{" "}
-                                                                            {
-                                                                                tier.denom
-                                                                            }
-                                                                        </p>
-                                                                        <p>
-                                                                            <span className="font-semibold">
-                                                                                Price:
-                                                                            </span>{" "}
-                                                                            {
-                                                                                tier.price
-                                                                            }
-                                                                        </p>
-                                                                        <p>
-                                                                            <span className="font-semibold">
-                                                                                Perks:
-                                                                            </span>{" "}
-                                                                            {tier.perks
-                                                                                .split(
-                                                                                    "\n"
-                                                                                )
-                                                                                .map(
-                                                                                    (
-                                                                                        perk: string,
-                                                                                        perkIndex: number
-                                                                                    ) => (
-                                                                                        <span
-                                                                                            key={
-                                                                                                perkIndex
-                                                                                            }
-                                                                                            className="block"
-                                                                                        >
-                                                                                            {
-                                                                                                perk
-                                                                                            }
-                                                                                        </span>
-                                                                                    )
-                                                                                )}
-                                                                        </p>
-                                                                    </div>
-                                                                )
-                                                            )}
-                                                    </div>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    }
-                                )}
-                            </div>
-                        </div>
-                        {/* Ensure only the owner can see this */}
-                        <div className="px-8 py-4">
-                            <div className="font-semibold text-xl mb-4">
+                        <div className="px-8 py-4 w-full">
+                            <div className="font-semibold text-xl mb-4 text-white text-center">
                                 Purchasable Tickets
                             </div>
-                            {buyableTiersTicketsList.map((tier, index) => (
-                                <div key={index} className="mb-4">
-                                    <div className="font-semibold text-lg">
-                                        {tier.title}
-                                    </div>
-                                    {tier.tickets.slice(0, 1).map(
-                                        (
-                                            ticket: {
-                                                ticket: any;
-                                                token_id: string;
-                                                metadata: any;
-                                            },
-                                            ticketIndex: number
-                                        ) => (
-                                            <div
-                                                key={ticketIndex}
-                                                className="border p-4 rounded-md mb-2 bg-white"
-                                            >
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex items-center">
-                                                        <img
-                                                            className="w-16 h-16 object-cover rounded-md mr-4"
-                                                            src={
-                                                                ticket.metadata
-                                                                    .image
-                                                            }
-                                                            alt={
-                                                                ticket.metadata
-                                                                    .name
-                                                            }
-                                                        />
-                                                        <div>
-                                                            <p className="font-semibold text-lg">
-                                                                {
+                            <div className="flex flex-wrap gap-4">
+                                {buyableTiersTicketsList.map((tier, index) => (
+                                    <>
+                                        {tier.tickets.slice(0, 1).map(
+                                            (
+                                                ticket: {
+                                                    ticket: any;
+                                                    token_id: string;
+                                                    metadata: any;
+                                                },
+                                                ticketIndex: number
+                                            ) => (
+                                                <Card
+                                                    key={ticketIndex}
+                                                    className="mb-2 bg-black text-white w-1/3"
+                                                >
+                                                    <CardHeader>
+                                                        <div className="flex items-center flex-col">
+                                                            <div className="font-semibold text-lg text-white w-min">
+                                                                {tier.title}
+                                                            </div>
+
+                                                            <img
+                                                                className="w-16 h-16 object-cover rounded-md m-4"
+                                                                src={
+                                                                    ticket
+                                                                        .metadata
+                                                                        .image
+                                                                }
+                                                                alt={
                                                                     ticket
                                                                         .metadata
                                                                         .name
                                                                 }
-                                                            </p>
-                                                            <p className="text-gray-600">
-                                                                {
-                                                                    ticket
-                                                                        .metadata
-                                                                        .description
-                                                                }
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="text-gray-600">
-                                                        {tier.tickets.length}{" "}
-                                                        tickets available
-                                                    </div>
-                                                </div>
-                                                <div className="mt-4">
-                                                    {ticket.metadata.attributes.map(
-                                                        (
-                                                            attribute: any,
-                                                            index: number
-                                                        ) => (
-                                                            <p key={index}>
-                                                                <span className="font-semibold">
+                                                            />
+                                                            <div>
+                                                                <CardTitle className="font-semibold text-sm">
                                                                     {
-                                                                        attribute.display_type
+                                                                        ticket
+                                                                            .metadata
+                                                                            .name
                                                                     }
-                                                                    :
-                                                                </span>{" "}
-                                                                {
-                                                                    attribute.value
-                                                                }
-                                                            </p>
-                                                        )
-                                                    )}
-                                                </div>
-                                                {/* <p className="mt-4">
-                                                    <span className="font-semibold">
-                                                        Ticket ID:
-                                                    </span>{" "}
-                                                    {ticket.token_id}
-                                                </p>
-                                                <p>
-                                                    <span className="font-semibold">
-                                                        Owner:
-                                                    </span>{" "}
-                                                    {ticket.ticket.access.owner}
-                                                </p> */}
-                                                <button
-                                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
-                                                    onClick={() =>
-                                                        handlePurchaseTicket(
-                                                            tier.title
-                                                        )
-                                                    }
-                                                >
-                                                    Purchase
-                                                </button>
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            ))}
+                                                                </CardTitle>
+                                                                <CardDescription className="text-gray-300">
+                                                                    {
+                                                                        ticket
+                                                                            .metadata
+                                                                            .description
+                                                                    }
+                                                                </CardDescription>
+                                                            </div>
+                                                        </div>
+                                                    </CardHeader>
+                                                    <CardContent className="mt-4 text-gray-300">
+                                                        {ticket.metadata.attributes.map(
+                                                            (
+                                                                attribute: any,
+                                                                index: number
+                                                            ) => (
+                                                                <p
+                                                                    key={index}
+                                                                    className="text-xs"
+                                                                >
+                                                                    <span className="font-semibold text-white">
+                                                                        {
+                                                                            attribute.display_type
+                                                                        }
+                                                                        :
+                                                                    </span>{" "}
+                                                                    {
+                                                                        attribute.value
+                                                                    }
+                                                                </p>
+                                                            )
+                                                        )}
+                                                    </CardContent>
+                                                    <CardFooter>
+                                                        <button
+                                                            className="mt-2 px-4 py-2 bg-black border text-white rounded-md mx-auto hover:bg-gray-900"
+                                                            onClick={() =>
+                                                                handlePurchaseTicket(
+                                                                    tier.title
+                                                                )
+                                                            }
+                                                        >
+                                                            Purchase
+                                                        </button>
+                                                    </CardFooter>
+                                                </Card>
+                                            )
+                                        )}
+                                    </>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )

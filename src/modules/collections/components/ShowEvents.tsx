@@ -3,11 +3,21 @@ import React, { FC, useEffect, useState } from "react";
 import { useQueryContract } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 
 interface ShowEventsProps {
     CW721Address: string;
 }
 const ShowEvents: FC<ShowEventsProps> = (props) => {
+    const { toast } = useToast();
     const { CW721Address } = props;
     const client = useAndromedaClient();
     // TODO: Fix any
@@ -55,6 +65,14 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                 setTokens(tempTokenList);
                 setLoading(false);
             } catch (error) {
+                toast({
+                    title: "Error getting events",
+                    description: "There was an error getting events",
+                    duration: 5000,
+                    variant: "destructive",
+                });
+                setLoading(false);
+
                 console.error("Error querying contract:", error);
             }
         };
@@ -66,7 +84,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
         <>
             <div className="flex flex-wrap justify-center gap-4">
                 {loading ? (
-                    <div className="text-center text-2xl mt-4">
+                    <div className="text-center text-2xl mt-4 text-white">
                         <div className="flex justify-center items-center space-x-2">
                             <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
                             <span>Loading...</span>
@@ -75,7 +93,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                 ) : (
                     <>
                         {tokens.length === 0 && (
-                            <div className="text-center text-2xl mt-4">
+                            <div className="text-center text-2xl mt-4 text-white">
                                 No events found
                             </div>
                         )}
@@ -84,48 +102,44 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                                 key={index}
                                 href={`/events/${token.token_id}`}
                             >
-                                <div className="max-w-sm rounded overflow-hidden shadow-lg my-4 p-4 bg-white">
-                                    <img
-                                        className="w-full h-48 object-cover rounded-md"
-                                        src={token.metadata.image}
-                                        alt={token.metadata.name}
-                                        onError={(e) => {
-                                            e.currentTarget.src =
-                                                "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
-                                        }}
-                                    />
-                                    <div className="px-6 py-4">
-                                        <div className="font-bold text-xl mb-2">
+                                <Card className="max-w-sm overflow-hidden shadow-lg my-4 p-4 bg-black">
+                                    <CardHeader>
+                                        <img
+                                            className="w-full h-48 object-cover rounded-md"
+                                            src={token.metadata.image}
+                                            alt={token.metadata.name}
+                                            onError={(e) => {
+                                                e.currentTarget.src =
+                                                    "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
+                                            }}
+                                        />
+                                    </CardHeader>
+                                    <CardContent>
+                                        <CardTitle className="font-bold text-xl mb-2 text-white">
                                             {token.metadata.name}
-                                        </div>
-                                        <p className="text-gray-700 text-base">
+                                        </CardTitle>
+                                        <CardDescription className="text-gray-400 text-base">
                                             {token.metadata.description}
-                                        </p>
-                                    </div>
-                                    {/* <div className="px-6 py-4">
-                                <p className="text-gray-600 text-sm">
-                                    Token ID: {token.token_id}
-                                </p>
-                                <p className="text-gray-600 text-sm">
-                                    Owner: {token.owner}
-                                </p>
-                            </div> */}
-                                    {token.metadata.attributes.map(
-                                        (attribute: any, index: number) =>
-                                            typeof attribute.value ===
-                                                "string" && (
-                                                <div
-                                                    key={index}
-                                                    className="px-6 text-gray-700 mr-2"
-                                                >
-                                                    <span className="font-semibold">
-                                                        {attribute.display_type}
-                                                    </span>
-                                                    : {attribute.value}
-                                                </div>
-                                            )
-                                    )}
-                                </div>
+                                        </CardDescription>
+                                        {token.metadata.attributes.map(
+                                            (attribute: any, index: number) =>
+                                                typeof attribute.value ===
+                                                    "string" && (
+                                                    <div
+                                                        key={index}
+                                                        className="text-gray-400 mr-2"
+                                                    >
+                                                        <span className="font-semibold text-white">
+                                                            {
+                                                                attribute.display_type
+                                                            }
+                                                        </span>
+                                                        : {attribute.value}
+                                                    </div>
+                                                )
+                                        )}
+                                    </CardContent>
+                                </Card>
                             </Link>
                         ))}
                     </>

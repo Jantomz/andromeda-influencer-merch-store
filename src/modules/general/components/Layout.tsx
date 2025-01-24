@@ -3,6 +3,7 @@ import { Box, Divider } from "@chakra-ui/react";
 import React, { FC, ReactNode } from "react";
 import Navbar from "./Navbar";
 import PoweredByLogo from "@/modules/ui/PoweredByLogo";
+import { Toaster } from "@/components/ui/toaster";
 
 interface LayoutProps {
     children?: ReactNode;
@@ -23,6 +24,7 @@ const Layout: FC<LayoutProps> = (props) => {
             {/* <Box>
         <Footer />
       </Box> */}
+            <Toaster />
         </Box>
     );
 };

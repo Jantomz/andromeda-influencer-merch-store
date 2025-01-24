@@ -1,5 +1,6 @@
 import { ApproveTicket, MakeEvent } from "@/modules/admin";
 import React from "react";
+import { CW721POAAddress, CW721TicketsAddress } from "@/ContractAddresses";
 
 interface Props {}
 
@@ -9,9 +10,9 @@ const Page = async ({ params }: { params: Promise<{ ticket: string }> }) => {
     return (
         <main>
             <ApproveTicket
-                CW721POAAddress="andr1eajtel5wh0h7atyy35t2h45sr32n38w2e3nvjdd0fz8maz6hpmks2de4df"
+                CW721POAAddress={CW721POAAddress}
                 ticket={ticket}
-                CW721TicketAddress="andr1t5rfxzn207pw83562dx6r3esfe3m4wcc49gyldxuydnh8mp79mysj2hcqk"
+                CW721TicketAddress={CW721TicketsAddress}
             />
         </main>
     );

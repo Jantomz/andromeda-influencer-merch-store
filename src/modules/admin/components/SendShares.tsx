@@ -6,8 +6,6 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
-import Link from "next/link";
-import { ibcTypes } from "@cosmjs/stargate/build/modules";
 
 interface SendSharesProps {
     MarketplaceAddress: string;

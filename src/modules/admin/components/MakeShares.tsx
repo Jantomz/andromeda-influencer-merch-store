@@ -6,15 +6,14 @@ import Layout from "@/modules/general/components/Layout";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import React, { FC } from "react";
 
-interface MakeSharesProps {}
+interface MakeSharesProps {
+    CW721SharesAddress: string;
+}
 
 const MakeShares: FC<MakeSharesProps> = (props) => {
-    const execute = useExecuteContract(
-        "andr1qhndf3kcpqxqxc33p042wae6d95svr5an292wt765n8jxq2wccgq0vyldt"
-    );
-    const simulate = useSimulateExecute(
-        "andr1qhndf3kcpqxqxc33p042wae6d95svr5an292wt765n8jxq2wccgq0vyldt"
-    );
+    const { CW721SharesAddress } = props;
+    const execute = useExecuteContract(CW721SharesAddress);
+    const simulate = useSimulateExecute(CW721SharesAddress);
 
     const { accounts } = useAndromedaStore();
     const account = accounts[0];
@@ -68,30 +67,6 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
         }
     };
 
-    //     update_recipients
-    // :
-    // recipients
-    // :
-    // Array(2)
-    // 0
-    // :
-    // percent
-    // :
-    // "0.8"
-    // recipient
-    // :
-    // {address: 'andr1eq2npynjfyx52utu34kht3p5vhp3yflt4qr2gx', ibc_recovery_address: null, msg: null}
-    // [[Prototype]]
-    // :
-    // Object
-    // 1
-    // :
-    // percent
-    // :
-    // "0.2"
-    // recipient
-    // :
-    // {address: 'andr1zgs0kv5snpfrt7d63nau6lu59aevmkhpyw06d
     return (
         <main>
             <button onClick={() => handleMintShares()}>Mint Shares</button>

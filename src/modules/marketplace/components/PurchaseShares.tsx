@@ -6,6 +6,8 @@ import {
     useSimulateExecute,
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 interface PurchaseSharesProps {
     CW721SharesAddress: string;
@@ -13,6 +15,8 @@ interface PurchaseSharesProps {
     OwnerAddress: string;
 }
 const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
+    const { toast } = useToast();
+
     const { MarketplaceAddress, CW721SharesAddress, OwnerAddress } = props;
     const client = useAndromedaClient();
     const [buyableShares, setBuyableShares] = useState<any[]>([]);
@@ -68,6 +72,14 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
             setSharesLength(0);
             setSharesProcessed(0);
         } catch (error) {
+            toast({
+                title: "Error getting shares",
+                description: "There was an error getting shares",
+                duration: 5000,
+                variant: "destructive",
+            });
+            setLoading(false);
+
             console.error("Error querying contract:", error);
         }
     };
@@ -84,8 +96,6 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
         if (!client) {
             return;
         }
-
-        fetchData();
 
         // Finds the actual next possible ticket to purchase to avoid race conditions?
 
@@ -132,9 +142,21 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                 ]
             );
 
+            toast({
+                title: "Share purchased",
+                description: "You have successfully purchased a share",
+                duration: 5000,
+            });
+
             fetchData();
         } catch (error) {
-            console.error("Error purchasing ticket:", error);
+            toast({
+                title: "Error purchasing share",
+                description: "There was an error purchasing a share",
+                duration: 5000,
+                variant: "destructive",
+            });
+            console.error("Error purchasing share:", error);
         }
     };
 
@@ -144,11 +166,14 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                 <div className="text-center text-2xl mt-4">
                     <div className="flex justify-center items-center space-x-2">
                         <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
-                        <span>Loading...</span>
+                        <span>Loading Shares...</span>
                         <br></br>
-                        <span>
-                            {sharesProcessed}/{sharesLength} Shares Loaded
-                        </span>
+                        {sharesProcessed > 0 && sharesLength > 0 && (
+                            <Progress
+                                value={sharesProcessed}
+                                max={sharesLength}
+                            />
+                        )}
                     </div>
                 </div>
             ) : (

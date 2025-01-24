@@ -7,6 +7,7 @@ import {
 } from "@/lib/andrjs";
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { useAndromedaStore } from "@/zustand/andromeda";
+import { useToast } from "@/hooks/use-toast";
 
 interface ApproveTicketProps {
     CW721POAAddress: string;
@@ -15,6 +16,8 @@ interface ApproveTicketProps {
 }
 
 const ApproveTicket: FC<ApproveTicketProps> = (props) => {
+    const { toast } = useToast();
+
     const client = useAndromedaClient();
     const { CW721POAAddress } = props;
     const { CW721TicketAddress } = props;
@@ -39,60 +42,76 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
             return;
         }
 
-        const token = await query({
-            all_nft_info: {
-                token_id: ticket,
-            },
-        });
-
-        const result = await simulate(
-            {
-                mint: {
-                    token_id: ticket + "-approved",
-                    extension: {
-                        // TODO: Change this
-                        publisher: "App Developer",
-                    },
-                    owner: token.access.owner,
+        try {
+            const token = await query({
+                all_nft_info: {
+                    token_id: ticket,
                 },
-            },
-            [{ denom: "uandr", amount: "500000" }]
-        );
+            });
 
-        const data = await execute(
-            {
-                mint: {
-                    token_id: ticket + "-approved",
-                    extension: {
-                        publisher: "App Developer",
+            const result = await simulate(
+                {
+                    mint: {
+                        token_id: ticket + "-approved",
+                        extension: {
+                            // TODO: Change this
+                            publisher: "App Developer",
+                        },
+                        owner: token.access.owner,
                     },
-                    owner: token.access.owner,
                 },
-            },
-            {
-                amount: [
-                    {
-                        denom: result.amount[0].denom,
-                        amount: result.amount[0].amount,
+                [{ denom: "uandr", amount: "500000" }]
+            );
+
+            const data = await execute(
+                {
+                    mint: {
+                        token_id: ticket + "-approved",
+                        extension: {
+                            publisher: "App Developer",
+                        },
+                        owner: token.access.owner,
                     },
-                ],
-                gas: result.gas,
+                },
+                {
+                    amount: [
+                        {
+                            denom: result.amount[0].denom,
+                            amount: result.amount[0].amount,
+                        },
+                    ],
+                    gas: result.gas,
+                }
+            );
+
+            console.log("data", data);
+
+            if (!data.gasUsed) {
+                return;
             }
-        );
 
-        console.log("data", data);
+            // TODO: show toast
 
-        if (!data.gasUsed) {
-            return;
+            // Mint Tickets
+
+            setIsLoading(false);
+            toast({
+                title: "Ticket Approved",
+                description: "Ticket has been approved",
+                duration: 5000,
+            });
+
+            window.location.href = "/";
+        } catch (error) {
+            console.error("Error approving ticket:", error);
+            setIsLoading(false);
+            toast({
+                title: "Error approving ticket",
+                description: "There was an error approving the ticket",
+                duration: 5000,
+                variant: "destructive",
+            });
         }
-
-        // TODO: show toast
-
-        // Mint Tickets
-
-        setIsLoading(false);
-
-        // window.location.href = "/";
     };
 
     if (!client) {
