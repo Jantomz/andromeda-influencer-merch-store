@@ -77,7 +77,7 @@ yarn dev
 
 If you want to run the application using your own contracts and set yourself as the admin, follow these steps:
 
-1. Go to Andromeda Protocol and access the aOS: [https://app.testnet.andromedaprotocol.io/](Andromeda Operating System).
+1. Go to Andromeda Protocol and access the aOS: [Andromeda Operating System](https://app.testnet.andromedaprotocol.io)
 2. Import the `.flex` file included in the repository (`Final-Ticket3-App.flex`).
 3. The aOS will create a proper Andromeda App for you. Make sure to fill in the minter address with your address.
 4. Once the app is created, publish it, then copy all the individual address components into `src/ContractAddresses.jsx` in this repository (including the `OwnerAddress`).
