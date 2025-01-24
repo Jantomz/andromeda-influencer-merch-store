@@ -20,15 +20,15 @@ Using this as a starting template, any developer can create their own Next.js ap
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Getting Started
 
 ### Clone the repository and install dependencies
 
 To get started, clone the repository and install the dependencies:
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/Jantomz/andromeda-ticket-3.git
+cd andromeda-ticket-3
 npm install
 # or
 yarn install
@@ -77,17 +77,65 @@ yarn dev
 
 If you want to run the application using your own contracts and set yourself as the admin, follow these steps:
 
-1. Go to Andromeda Protocol and access the aOS (Andromeda Operating System).
+1. Go to Andromeda Protocol and access the aOS: [https://app.testnet.andromedaprotocol.io/](Andromeda Operating System).
 2. Import the `.flex` file included in the repository (`Final-Ticket3-App.flex`).
 3. The aOS will create a proper Andromeda App for you. Make sure to fill in the minter address with your address.
-4. Once the app is created, publish it, then copy all the individual address components into `src/ContractAddresses.jsx` in this repository.
-5. After this setup, you don't need to run the app as an admin every time. You can simply run the app normally using `npm run dev` or `yarn dev`, and it should work with your own contract setup.
+4. Once the app is created, publish it, then copy all the individual address components into `src/ContractAddresses.jsx` in this repository (including the `OwnerAddress`).
+5. After this setup, you can run the app as an admin. You can simply run the app normally using `npm run dev` or `yarn dev`, and it should work with your own contract setup.
 
 ## Deployed Version
 
 If you'd like to view a live version of the app, you can access the web version deployed at:
 
 [https://ticket3.jadenzhang.com](https://ticket3.jadenzhang.com)
+
+# Ticket3 Usage Guide
+
+Welcome to Ticket3! Here's a step-by-step guide to help you get started with the app.
+
+## 1. **Connect Your Keplr Wallet**
+   - First things first, make sure you've connected your **Keplr Wallet** and that it's set to the **Andromeda Testnet**. You should see the network indicator in the navbar once it's successfully connected. 
+
+## 2. **Initial Setup**
+   - The app’s full functionality becomes available only after connecting your wallet. So, make sure you've done that before moving forward.
+
+## 3. **App Stability Warning**
+   - Please note that the app is still in development, and while the error handling is thorough, **malicious attack protection** is not yet fully implemented. We’ll get there, but for now, **please use with caution**.
+   - Also, keep in mind that the app may take time to load certain features. **Be patient with transaction processing**, as it will update once completed!
+
+## 4. **Browse Events**
+   - Head over to the **Events** tab to browse a list of available events.
+   - Click on any event to view **more detailed information**.
+
+## 5. **For Admins: Manage Tickets**
+   - If you're an **admin**, you can view all the sellable tickets for an event within the event info page. From here, you can send tickets to the marketplace for others to buy.
+
+## 6. **Purchasing Tickets (For Users)**
+   - If you're not an admin, you can still purchase tickets. In the event info page, you’ll see an option to **buy tickets**. Click that to view available options for purchase.
+
+## 7. **Events Wallet**
+   - In the **Events Wallet** tab, you can view all the tickets you’ve purchased. This is where they’ll be stored for easy access.
+
+## 8. **Proof of Attendance**
+   - For admins: You can generate a **QR code** that others can scan to **add Proof of Attendance** to their ticket. This helps track and verify attendees.
+
+## 9. **Ticket3 Shares**
+   - Another feature in the app is **Ticket3 Shares**. Once these shares have loaded, you’ll be able to:
+     - View how many shares you own.
+     - See the distribution of shares.
+     - **Purchase more shares** if you wish!
+
+## 10. **Admin Controls: Managing Events & Shares**
+   - As an **admin**, there’s one more tab where you can:
+     - **Create new events**.
+     - **Mint new shares**.
+     - **Send shares to the marketplace** (one by one, for control).
+     - **Update shares for profit splitting** among shareholders.
+
+   **Important Notes for Admins:**
+   - **Shares can only be minted once** for each event at this stage. 
+   - When sending tickets or shares to the marketplace, only **one at a time** can be listed. This is intentional to **prevent marketplace flooding** and maintain more control. However, this may be expanded in the future.
+   - Remember, **updating shares is crucial for profit splitting**. Once you update the shares, all ticket purchases will be **split among shareholders**.
 
 ## Learn More
 
