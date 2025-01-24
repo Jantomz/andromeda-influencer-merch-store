@@ -24,21 +24,23 @@ interface PurchaseTicketsProps {
     OwnerAddress: string;
 }
 const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
-    const { toast } = useToast();
+    const { toast } = useToast(); // Using toast for user notifications
 
     const { CW721Address, CW721TicketAddress, token_id, MarketplaceAddress } =
         props;
-    const client = useAndromedaClient();
+    const client = useAndromedaClient(); // Initialize Andromeda client
 
-    const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<any[]>([]);
+    const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<
+        any[]
+    >([]);
     const [token, setToken] = useState<any>();
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // State to manage loading status
 
-    const query = useQueryContract(CW721Address);
-    const queryTicket = useQueryContract(CW721TicketAddress);
-    const executePurchase = useExecuteContract(MarketplaceAddress);
-    const simulatePurchase = useSimulateExecute(MarketplaceAddress);
+    const query = useQueryContract(CW721Address); // Query contract for CW721Address
+    const queryTicket = useQueryContract(CW721TicketAddress); // Query contract for CW721TicketAddress
+    const executePurchase = useExecuteContract(MarketplaceAddress); // Execute contract for MarketplaceAddress
+    const simulatePurchase = useSimulateExecute(MarketplaceAddress); // Simulate contract execution
 
     const fetchData = async () => {
         setLoading(true);
@@ -53,7 +55,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                 },
             });
 
-            const response = await fetch(token.info.token_uri);
+            const response = await fetch(token.info.token_uri); // Fetch token metadata
 
             const metadata = await response.json();
 
@@ -80,7 +82,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                         },
                     });
                     if (ticket.access.owner === MarketplaceAddress) {
-                        const metadata = await fetch(ticket.info.token_uri);
+                        const metadata = await fetch(ticket.info.token_uri); // Fetch ticket metadata
                         totalTicketsList.push({
                             ticket,
                             metadata: await metadata.json(),
@@ -94,7 +96,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                 });
             }
 
-            setBuyableTiersTicketsList(totalTiersList);
+            setBuyableTiersTicketsList(totalTiersList); // Update state with fetched tickets
 
             setToken(tokenData);
             setLoading(false);
@@ -112,7 +114,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(); // Fetch data on component mount
     }, [query, client]);
 
     const handlePurchaseTicket = async (tier: string) => {
@@ -122,9 +124,9 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
             return;
         }
 
-        fetchData();
+        fetchData(); // Refresh data before purchase
 
-        // Finds the actual next possible ticket to purchase to avoid race conditions?
+        // Finds the actual next possible ticket to purchase to avoid race conditions
         const ticket = buyableTiersTicketsList
             .find((t) => t.title === tier)
             ?.tickets.find(
@@ -189,7 +191,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
             });
             setLoading(false);
 
-            fetchData();
+            fetchData(); // Refresh data after purchase
         } catch (error) {
             toast({
                 title: "Error purchasing ticket",
@@ -214,7 +216,6 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
             ) : (
                 token && (
                     <div className="max-w-4xl mx-auto rounded overflow-hidden shadow-lg my-8 p-6 bg-black">
-
                         <div className="px-8 py-6">
                             <div className="font-bold text-3xl mb-4 text-center text-white">
                                 Purchase Tickets for {token.metadata.name}

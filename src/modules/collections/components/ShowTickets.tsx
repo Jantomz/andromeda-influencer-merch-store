@@ -18,27 +18,28 @@ interface ShowTicketsProps {
     CW721TicketAddress: string;
     CW721POAAddress: string;
 }
+
 const ShowTickets: FC<ShowTicketsProps> = (props) => {
-    const { toast } = useToast();
+    const { toast } = useToast(); // To display toast notifications
     const { CW721TicketAddress, CW721POAAddress } = props;
-    const client = useAndromedaClient();
-    const [tokens, setTokens] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const { accounts } = useAndromedaStore();
+    const client = useAndromedaClient(); // Custom hook to get Andromeda client
+    const [tokens, setTokens] = useState<any[]>([]); // State to store tokens
+    const [loading, setLoading] = useState(true); // State to manage loading state
+    const { accounts } = useAndromedaStore(); // Zustand store for accounts
     const account = accounts[0];
-    const address = account?.address ?? "";
+    const address = account?.address ?? ""; // Fallback to empty string if no address
 
-    const baseURL = typeof window !== "undefined" ? window.location.origin : "";
+    const baseURL = typeof window !== "undefined" ? window.location.origin : ""; // Get base URL for QR code generation
 
-    const query = useQueryContract(CW721TicketAddress);
-    const queryPOA = useQueryContract(CW721POAAddress);
+    const query = useQueryContract(CW721TicketAddress); // Query contract for tickets
+    const queryPOA = useQueryContract(CW721POAAddress); // Query contract for POA
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
+            setLoading(true); // Set loading state to true before fetching data
             let tempTokenList = [];
             if (!client || !query) {
-                setLoading(false);
+                setLoading(false); // Stop loading if client or query is not available
                 return;
             }
             try {
@@ -49,14 +50,14 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                         duration: 5000,
                         variant: "destructive",
                     });
-                    setLoading(false);
+                    setLoading(false); // Stop loading if the address is the owner
                     return;
                 }
-                const tokens = await query({ all_tokens: { limit: 9999 } });
+                const tokens = await query({ all_tokens: { limit: 9999 } }); // Fetch all tokens
 
                 const approvedTokens = await queryPOA({
                     all_tokens: { limit: 9999 },
-                });
+                }); // Fetch all approved tokens
 
                 const tokenList = tokens.tokens;
                 const approvedTokenList = approvedTokens.tokens;
@@ -69,10 +70,10 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                     });
 
                     if (token.access.owner !== address) {
-                        continue;
+                        continue; // Skip tokens not owned by the current address
                     }
 
-                    const response = await fetch(token.info.token_uri);
+                    const response = await fetch(token.info.token_uri); // Fetch token metadata
 
                     const metadata = await response.json();
 
@@ -82,7 +83,7 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                         metadata: metadata,
                     };
 
-                    tempTokenList.push(tokenData);
+                    tempTokenList.push(tokenData); // Add token data to the list
                 }
 
                 for (let i = 0; i < approvedTokenList.length; i++) {
@@ -93,7 +94,7 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                     });
 
                     if (token.access.owner !== address) {
-                        continue;
+                        continue; // Skip approved tokens not owned by the current address
                     }
 
                     const tokenData = {
@@ -112,12 +113,12 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                             display_type: "Proof of Attendance",
                             trait_type: "proof-of-attendance",
                             value: "Approved Attendance",
-                        });
+                        }); // Add POA attribute to existing token
                     }
                 }
 
-                setTokens(tempTokenList);
-                setLoading(false);
+                setTokens(tempTokenList); // Update state with fetched tokens
+                setLoading(false); // Set loading state to false after fetching data
             } catch (error) {
                 toast({
                     title: "Error getting tickets",
@@ -125,20 +126,20 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                     duration: 5000,
                     variant: "destructive",
                 });
-                setLoading(false);
+                setLoading(false); // Set loading state to false in case of error
 
-                console.error("Error querying contract:", error);
+                console.error("Error querying contract:", error); // Log error to console
             }
         };
 
-        fetchData();
-    }, [query, client]);
+        fetchData(); // Call fetchData function
+    }, [query, client]); // Dependency array for useEffect
 
     const getAttributeValue = (attributes: any[], traitType: string) => {
         const attribute = attributes.find(
             (attr) => attr.trait_type === traitType
         );
-        return attribute ? attribute.value : null;
+        return attribute ? attribute.value : null; // Return attribute value if found
     };
 
     const categorizeTokens = (tokens: any[]) => {
@@ -165,11 +166,11 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                 ) > now
         );
 
-        return { pastEvents, currentEvents, upcomingEvents };
+        return { pastEvents, currentEvents, upcomingEvents }; // Categorize tokens based on event dates
     };
 
     const { pastEvents, currentEvents, upcomingEvents } =
-        categorizeTokens(tokens);
+        categorizeTokens(tokens); // Destructure categorized tokens
 
     const renderTokens = (tokens: any[], title: string) => (
         <>

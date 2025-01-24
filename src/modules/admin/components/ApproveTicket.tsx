@@ -17,22 +17,22 @@ interface ApproveTicketProps {
 }
 
 const ApproveTicket: FC<ApproveTicketProps> = (props) => {
-    const { toast } = useToast();
+    const { toast } = useToast(); // Custom hook for toast notifications
 
-    const client = useAndromedaClient();
+    const client = useAndromedaClient(); // Hook to get the Andromeda client
     const { CW721POAAddress } = props;
     const { CW721TicketAddress } = props;
     const { ticket } = props;
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // State to manage loading status
 
-    const { accounts } = useAndromedaStore();
+    const { accounts } = useAndromedaStore(); // Zustand store for Andromeda accounts
     const account = accounts[0];
-    const userAddress = account?.address ?? "";
+    const userAddress = account?.address ?? ""; // Fallback to empty string if no address
 
-    const execute = useExecuteContract(CW721POAAddress);
-    const simulate = useSimulateExecute(CW721POAAddress);
-    const query = useQueryContract(CW721TicketAddress);
+    const execute = useExecuteContract(CW721POAAddress); // Hook to execute contract
+    const simulate = useSimulateExecute(CW721POAAddress); // Hook to simulate contract execution
+    const query = useQueryContract(CW721TicketAddress); // Hook to query contract
 
     const handleApprove = async () => {
         setIsLoading(true);
@@ -84,7 +84,7 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
                         owner: token.access.owner,
                     },
                 },
-                [{ denom: "uandr", amount: "500000" }]
+                [{ denom: "uandr", amount: "500000" }] // Simulate with a specific amount
             );
 
             const data = await execute(
@@ -104,7 +104,7 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
                             amount: result.amount[0].amount,
                         },
                     ],
-                    gas: result.gas,
+                    gas: result.gas, // Use gas from simulation result
                 }
             );
 
@@ -119,7 +119,7 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
                 duration: 5000,
             });
 
-            window.location.href = "/";
+            window.location.href = "/"; // Redirect to home page after approval
         } catch (error) {
             console.error("Error approving ticket:", error);
             setIsLoading(false);
@@ -133,7 +133,7 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
     };
 
     if (!client) {
-        return <div className="text-red-500">Wallet Not Connected</div>;
+        return <div className="text-red-500">Wallet Not Connected</div>; // Show error if wallet is not connected
     }
     return (
         <section className="p-6 bg-gray-800 rounded-lg shadow-md">

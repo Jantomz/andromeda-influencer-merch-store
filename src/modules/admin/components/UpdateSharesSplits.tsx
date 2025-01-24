@@ -19,7 +19,7 @@ interface UpdateSharesSplitsProps {
 }
 
 const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
-    const { toast } = useToast();
+    const { toast } = useToast(); // Using custom toast hook for notifications
 
     const {
         SplitterAddress,
@@ -27,29 +27,29 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
         MarketplaceAddress,
         OwnerAddress,
     } = props;
-    const client = useAndromedaClient();
+    const client = useAndromedaClient(); // Initialize Andromeda client
 
-    const executeSplitter = useExecuteContract(SplitterAddress);
-    const simulateSplitter = useSimulateExecute(SplitterAddress);
-    const queryShares = useQueryContract(CW721SharesAddress);
-    const querySplitter = useQueryContract(SplitterAddress);
+    const executeSplitter = useExecuteContract(SplitterAddress); // Hook to execute contract
+    const simulateSplitter = useSimulateExecute(SplitterAddress); // Hook to simulate contract execution
+    const queryShares = useQueryContract(CW721SharesAddress); // Hook to query shares contract
+    const querySplitter = useQueryContract(SplitterAddress); // Hook to query splitter contract
 
-    const [graphData, setGraphData] = useState<any[]>([]);
+    const [graphData, setGraphData] = useState<any[]>([]); // State to store graph data
 
-    const [sharesProcessed, setSharesProcessed] = useState(0);
-    const [sharesLength, setSharesLength] = useState(0);
-    const [sharesUpdated, setSharesUpdated] = useState(true);
-    const [loading, setLoading] = useState(true);
+    const [sharesProcessed, setSharesProcessed] = useState(0); // State to track processed shares
+    const [sharesLength, setSharesLength] = useState(0); // State to track total shares
+    const [sharesUpdated, setSharesUpdated] = useState(true); // State to track if shares are updated
+    const [loading, setLoading] = useState(true); // State to track loading status
 
-    const { accounts } = useAndromedaStore();
-    const account = accounts[0];
-    const userAddress = account?.address ?? "";
+    const { accounts } = useAndromedaStore(); // Get accounts from store
+    const account = accounts[0]; // Get the first account
+    const userAddress = account?.address ?? ""; // Get user address or empty string
 
     const handleCheckSharesDisparity = async () => {
-        setLoading(true);
+        setLoading(true); // Set loading to true
 
         if (!queryShares || !querySplitter || !client) {
-            setLoading(false);
+            setLoading(false); // Stop loading if dependencies are missing
             return;
         }
 
@@ -58,7 +58,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                 limit: 100,
             },
         });
-        setSharesLength(shares.tokens.length);
+        setSharesLength(shares.tokens.length); // Set total shares length
 
         let tempSharesList = [];
 
@@ -72,9 +72,9 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                     },
                 });
 
-                tempSharesList.push(shareInfo);
+                tempSharesList.push(shareInfo); // Collect share info
                 count += 1;
-                setSharesProcessed(count);
+                setSharesProcessed(count); // Update processed shares count
             }
 
             const sharesCount: { [address: string]: number } = {};
@@ -82,12 +82,12 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             for (const share of tempSharesList) {
                 let ownerAddress = share.access.owner;
                 if (ownerAddress === MarketplaceAddress) {
-                    ownerAddress = OwnerAddress;
+                    ownerAddress = OwnerAddress; // Replace marketplace address with owner address
                 }
                 if (sharesCount[ownerAddress]) {
-                    sharesCount[ownerAddress] += 1;
+                    sharesCount[ownerAddress] += 1; // Increment share count for address
                 } else {
-                    sharesCount[ownerAddress] = 1;
+                    sharesCount[ownerAddress] = 1; // Initialize share count for address
                 }
             }
             const totalShares = Object.values(sharesCount).reduce(
@@ -102,7 +102,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                         msg: null,
                         ibc_recovery_address: null,
                     },
-                    percent: (count / totalShares).toFixed(2),
+                    percent: (count / totalShares).toFixed(2), // Calculate percentage
                 })
             );
 
@@ -124,10 +124,10 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                         recipient.recipient.address.slice(
                             recipient.recipient.address.length - 4
                         ),
-                    value: parseFloat(recipient.percent),
+                    value: parseFloat(recipient.percent), // Format graph data
                 })
             );
-            setGraphData(graphData);
+            setGraphData(graphData); // Set graph data
 
             const isConfigSame = currentConfig.every(
                 (current: any, index: number) => {
@@ -143,11 +143,11 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             console.log(JSON.stringify(currentConfig));
             console.log(JSON.stringify(correctConfig));
             if (!isConfigSame) {
-                setSharesUpdated(false);
+                setSharesUpdated(false); // Set shares updated status
             } else {
                 setSharesUpdated(true);
             }
-            setLoading(false);
+            setLoading(false); // Stop loading
             setSharesLength(0);
             setSharesProcessed(0);
             toast({
@@ -164,7 +164,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             });
 
             console.error("Error querying contract:", error);
-            setLoading(false);
+            setLoading(false); // Stop loading on error
         }
     };
 
@@ -180,7 +180,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
 
         const handleEffect = async () => {
             if (isMounted) {
-                await handleCheckSharesDisparity();
+                await handleCheckSharesDisparity(); // Check shares disparity on mount
             }
         };
 
@@ -191,14 +191,14 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             setSharesLength(0);
             setSharesProcessed(0);
         };
-    }, [client]);
+    }, [client]); // Dependency array to re-run effect when client changes
 
     const handleUpdateSharesSplits = async () => {
         if (!queryShares || !querySplitter || !client) {
             return;
         }
 
-        setLoading(true);
+        setLoading(true); // Set loading to true
         setSharesProcessed(0);
         try {
             const shares = await queryShares({
@@ -206,7 +206,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                     limit: 100,
                 },
             });
-            setSharesLength(shares.tokens.length);
+            setSharesLength(shares.tokens.length); // Set total shares length
 
             let tempSharesList = [];
 
@@ -217,8 +217,8 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                     },
                 });
 
-                tempSharesList.push(shareInfo);
-                setSharesProcessed((prev) => prev + 1);
+                tempSharesList.push(shareInfo); // Collect share info
+                setSharesProcessed((prev) => prev + 1); // Update processed shares count
             }
 
             const sharesCount: { [address: string]: number } = {};
@@ -226,12 +226,12 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             for (const share of tempSharesList) {
                 let ownerAddress = share.access.owner;
                 if (ownerAddress === MarketplaceAddress) {
-                    ownerAddress = OwnerAddress;
+                    ownerAddress = OwnerAddress; // Replace marketplace address with owner address
                 }
                 if (sharesCount[ownerAddress]) {
-                    sharesCount[ownerAddress] += 1;
+                    sharesCount[ownerAddress] += 1; // Increment share count for address
                 } else {
-                    sharesCount[ownerAddress] = 1;
+                    sharesCount[ownerAddress] = 1; // Initialize share count for address
                 }
             }
             const totalShares = Object.values(sharesCount).reduce(
@@ -246,7 +246,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                         ibc_recovery_address: null,
                         msg: null,
                     },
-                    percent: (count / totalShares).toFixed(2),
+                    percent: (count / totalShares).toFixed(2), // Calculate percentage
                 })
             );
 
@@ -278,8 +278,8 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
 
             setSharesLength(0);
             setSharesProcessed(0);
-            setSharesUpdated(true);
-            setLoading(false);
+            setSharesUpdated(true); // Set shares updated status
+            setLoading(false); // Stop loading
             toast({
                 title: "Shares Splits Updated",
                 description: "Shares splits have been updated",
@@ -292,7 +292,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                 duration: 5000,
                 variant: "destructive",
             });
-            setLoading(false);
+            setLoading(false); // Stop loading on error
         }
     };
 
@@ -310,7 +310,7 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                     <h1 className="text-2xl font-semibold text-white m-4">
                         Update Shares Splits
                     </h1>
-                    <SharesGraph data={graphData} />
+                    <SharesGraph data={graphData} /> {/* Render graph */}
                     {sharesUpdated && (
                         <p className="text-lg font-semibold m-2 text-gray-400">
                             Shares are up to date

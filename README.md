@@ -3,20 +3,29 @@
 <img src="https://github.com/andromedaprotocol/andromeda-nextjs-application-starter/blob/main/public/Andromeda-Logo.png" width=1000>
 </p>
 
-# This project was bootstrapped with the Andromeda Next.js Application Starter
+# This project was built for the 2024/25 Andromeda Labs Winter Internship
+
+I had an absolutely amazing time throughout this internship, working to create a use case from Andromeda's tools. Although my tool is quite simple, I strived to work on _integration_ and diminish _clutter_, focusing on bringing a fun use case to life! The Andromeda Operating System is quite the miracle and I look forward to continue building this app and other projects out!
+
+This current project has many flaws that I hope to fix iteratively. One big case was not using multi-execute on contracts. I set up a system to authorize single transactions, which I believe was more controlled, though less _simple_. I also hope to clean up my code and refactor the large files!
+
+### This project was bootstrapped with the Andromeda Next.js Application Starter
 
 ## About
+
 The Andromeda Next.js Application Starter is a base setup for developers to start building without having to worry about the prerequisites. Containing all the key parts needed, it allows you to set up in minutes and start working on your builds. The starter contains the following setups:
-- Keplr integration
-- Andromeda Client (Devnet)
-- GraphQL integration
-- Contract execution hooks 
+
+-   Keplr integration
+-   Andromeda Client (Devnet)
+-   GraphQL integration
+-   Contract execution hooks
 
 Using this as a starting template, any developer can create their own Next.js application with custom embeddables that suit their needs.
 
 **Notes**:
-- It mainly uses Chakra UI, but developers can install any styling library, such as Tailwind, for example.
-- This setup is currently using our Devnet (Testnet for Devs). If you encounter any issues connecting to the GraphQL or chain, please contact us for support.
+
+-   It mainly uses Chakra UI, but developers can install any styling library, such as Tailwind, for example.
+-   This setup is currently using our Devnet (Testnet for Devs). If you encounter any issues connecting to the GraphQL or chain, please contact us for support.
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
@@ -33,6 +42,7 @@ npm install
 # or
 yarn install
 ```
+
 # Set up environment variables
 
 You need to set up your environment variables to configure the application properly.
@@ -94,56 +104,67 @@ If you'd like to view a live version of the app, you can access the web version 
 Welcome to Ticket3! Here's a step-by-step guide to help you get started with the app.
 
 ## 1. **Connect Your Keplr Wallet**
-   - First things first, make sure you've connected your **Keplr Wallet** and that it's set to the **Andromeda Testnet**. You should see the network indicator in the navbar once it's successfully connected. 
+
+-   First things first, make sure you've connected your **Keplr Wallet** and that it's set to the **Andromeda Testnet**. You should see the network indicator in the navbar once it's successfully connected.
 
 ## 2. **Initial Setup**
-   - The app’s full functionality becomes available only after connecting your wallet. So, make sure you've done that before moving forward.
+
+-   The app’s full functionality becomes available only after connecting your wallet. So, make sure you've done that before moving forward.
 
 ## 3. **App Stability Warning**
-   - Please note that the app is still in development, and while the error handling is thorough, **malicious attack protection** is not yet fully implemented. We’ll get there, but for now, **please use with caution**.
-   - Also, keep in mind that the app may take time to load certain features. **Be patient with transaction processing**, as it will update once completed!
+
+-   Please note that the app is still in development, and while the error handling is thorough, **malicious attack protection** is not yet fully implemented. We’ll get there, but for now, **please use with caution**.
+-   Also, keep in mind that the app may take time to load certain features. **Be patient with transaction processing**, as it will update once completed!
 
 ## 4. **Browse Events**
-   - Head over to the **Events** tab to browse a list of available events.
-   - Click on any event to view **more detailed information**.
+
+-   Head over to the **Events** tab to browse a list of available events.
+-   Click on any event to view **more detailed information**.
 
 ## 5. **For Admins: Manage Tickets**
-   - If you're an **admin**, you can view all the sellable tickets for an event within the event info page. From here, you can send tickets to the marketplace for others to buy.
+
+-   If you're an **admin**, you can view all the sellable tickets for an event within the event info page. From here, you can send tickets to the marketplace for others to buy.
 
 ## 6. **Purchasing Tickets (For Users)**
-   - If you're not an admin, you can still purchase tickets. In the event info page, you’ll see an option to **buy tickets**. Click that to view available options for purchase.
+
+-   If you're not an admin, you can still purchase tickets. In the event info page, you’ll see an option to **buy tickets**. Click that to view available options for purchase.
 
 ## 7. **Events Wallet**
-   - In the **Events Wallet** tab, you can view all the tickets you’ve purchased. This is where they’ll be stored for easy access.
+
+-   In the **Events Wallet** tab, you can view all the tickets you’ve purchased. This is where they’ll be stored for easy access.
 
 ## 8. **Proof of Attendance**
-   - For admins: You can generate a **QR code** that others can scan to **add Proof of Attendance** to their ticket. This helps track and verify attendees.
+
+-   For admins: Each ticket generates a **QR code** that admins can scan to **add Proof of Attendance** to the ticket. This helps track and verify attendees.
 
 ## 9. **Ticket3 Shares**
-   - Another feature in the app is **Ticket3 Shares**. Once these shares have loaded, you’ll be able to:
-     - View how many shares you own.
-     - See the distribution of shares.
-     - **Purchase more shares** if you wish!
+
+-   Another feature in the app is **Ticket3 Shares**. Once these shares have loaded, you’ll be able to:
+    -   View how many shares you own.
+    -   See the distribution of shares.
+    -   **Purchase more shares** if you wish!
 
 ## 10. **Admin Controls: Managing Events & Shares**
-   - As an **admin**, there’s one more tab where you can:
-     - **Create new events**.
-     - **Mint new shares**.
-     - **Send shares to the marketplace** (one by one, for control).
-     - **Update shares for profit splitting** among shareholders.
 
-   **Important Notes for Admins:**
-   - **Shares can only be minted once** for each event at this stage. 
-   - When sending tickets or shares to the marketplace, only **one at a time** can be listed. This is intentional to **prevent marketplace flooding** and maintain more control. However, this may be expanded in the future.
-   - Remember, **updating shares is crucial for profit splitting**. Once you update the shares, all ticket purchases will be **split among shareholders**.
+-   As an **admin**, there’s one more tab where you can:
+    -   **Create new events**.
+    -   **Mint new shares**.
+    -   **Send shares to the marketplace** (one by one, for control).
+    -   **Update shares for profit splitting** among shareholders.
+
+**Important Notes for Admins:**
+
+-   **Shares can only be minted once** for each event at this stage.
+-   When sending tickets or shares to the marketplace, only **one at a time** can be listed. This is intentional to **prevent marketplace flooding** and maintain more control. However, this may be expanded in the future.
+-   Remember, **updating shares is crucial for profit splitting**. Once you update the shares, all ticket purchases will be **split among shareholders**.
 
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - An interactive Next.js tutorial.
-- You can also check out the [Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+-   [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
+-   [Learn Next.js](https://nextjs.org/learn) - An interactive Next.js tutorial.
+-   You can also check out the [Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
@@ -153,4 +174,4 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Licensing
 
-- [Terms and Conditions](#)
+-   [Terms and Conditions](#)

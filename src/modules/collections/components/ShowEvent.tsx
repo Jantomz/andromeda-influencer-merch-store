@@ -29,7 +29,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
     const { toast } = useToast();
     const { accounts } = useAndromedaStore();
     const account = accounts[0];
-    const address = account?.address ?? "";
+    const address = account?.address ?? ""; // Default to empty string if no address
 
     const {
         CW721Address,
@@ -130,7 +130,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                         },
                     });
                     if (ticket.access.owner === MarketplaceAddress) {
-                        availableTicketsList.push(ticket);
+                        availableTicketsList.push(ticket); // Only push tickets available in the marketplace
                     }
                     if (ticket.access.owner === OwnerAddress) {
                         const metadata = await fetch(ticket.info.token_uri);
@@ -169,7 +169,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
 
     useEffect(() => {
         fetchData();
-    }, [query, client]);
+    }, [query, client]); // Fetch data whenever query or client changes
 
     const jsonToBase64 = (json: any) => {
         return Buffer.from(JSON.stringify(json)).toString("base64");
@@ -240,7 +240,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                 duration: 5000,
             });
 
-            fetchData();
+            fetchData(); // Refresh data after sending ticket to marketplace
         } catch (error) {
             toast({
                 title: "Error sending ticket to marketplace",
@@ -272,7 +272,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                             alt={token.metadata.name}
                             onError={(e) => {
                                 e.currentTarget.src =
-                                    "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
+                                    "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg"; // Fallback image if the original fails to load
                             }}
                         />
 
@@ -311,7 +311,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                                         b: any
                                                                     ) =>
                                                                         a.price -
-                                                                        b.price
+                                                                        b.price // Sort tiers by price
                                                                 )
                                                                 .map(
                                                                     (

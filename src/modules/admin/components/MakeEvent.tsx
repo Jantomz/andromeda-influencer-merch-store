@@ -12,15 +12,15 @@ interface MakeEventProps {
 }
 
 const MakeEvent: FC<MakeEventProps> = (props) => {
-    const { toast } = useToast();
+    const { toast } = useToast(); // Using custom toast hook for notifications
 
-    const client = useAndromedaClient();
+    const client = useAndromedaClient(); // Custom hook to get Andromeda client
     const eventCW721 = props.CW721Address;
     const ticketCW721 = props.TicketCW721Address;
     const [baseURL, setBaseURL] = useState("");
     const [tokenId, setTokenId] = useState("");
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // State to manage loading status
 
     const [tiers, setTiers] = useState<
         {
@@ -33,13 +33,13 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
         }[]
     >([]);
 
-    const { accounts } = useAndromedaStore();
+    const { accounts } = useAndromedaStore(); // Zustand store for state management
     const account = accounts[0];
     const userAddress = account?.address ?? "";
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            setBaseURL(window.location.origin);
+            setBaseURL(window.location.origin); // Set base URL for metadata
         }
         if (userAddress !== OwnerAddress) {
             toast({
@@ -49,10 +49,10 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                 variant: "destructive",
             });
         }
-    }, []);
+    }, [userAddress, toast]);
 
-    const execute = useExecuteContract(eventCW721);
-    const simulate = useSimulateExecute(eventCW721);
+    const execute = useExecuteContract(eventCW721); // Hook to execute contract
+    const simulate = useSimulateExecute(eventCW721); // Hook to simulate contract execution
 
     const executeTicket = useExecuteContract(ticketCW721);
     const simulateTicket = useSimulateExecute(ticketCW721);
@@ -148,7 +148,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
 
             // Mint Tickets
             for (const tier of tiers) {
-                const batchSize = 100;
+                const batchSize = 100; // Batch size for minting tickets
                 for (
                     let batchStart = 0;
                     batchStart < tier.amount;
@@ -267,7 +267,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                 duration: 5000,
             });
 
-            window.location.href = "/";
+            window.location.href = "/"; // Redirect to home page after event creation
         } catch (error) {
             toast({
                 title: "Error making event",
@@ -282,7 +282,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
     };
 
     if (!client) {
-        return <div className="text-red-500">Wallet Not Connected</div>;
+        return <div className="text-red-500">Wallet Not Connected</div>; // Display message if wallet is not connected
     }
     return (
         <section className="p-6 bg-black rounded-lg shadow-md">

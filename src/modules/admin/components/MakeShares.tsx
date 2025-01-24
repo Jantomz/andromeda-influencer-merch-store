@@ -15,24 +15,24 @@ interface MakeSharesProps {
 }
 
 const MakeShares: FC<MakeSharesProps> = (props) => {
-    const client = useAndromedaClient;
-    const { toast } = useToast();
-    const { CW721SharesAddress } = props;
-    const execute = useExecuteContract(CW721SharesAddress);
-    const simulate = useSimulateExecute(CW721SharesAddress);
-    const query = useQueryContract(CW721SharesAddress);
+    const client = useAndromedaClient; // Initialize Andromeda client
+    const { toast } = useToast(); // Initialize toast for notifications
+    const { CW721SharesAddress } = props; // Destructure props for easier access
+    const execute = useExecuteContract(CW721SharesAddress); // Hook to execute contract
+    const simulate = useSimulateExecute(CW721SharesAddress); // Hook to simulate contract execution
+    const query = useQueryContract(CW721SharesAddress); // Hook to query contract
 
-    const { accounts } = useAndromedaStore();
-    const account = accounts[0];
-    const userAddress = account?.address ?? "";
+    const { accounts } = useAndromedaStore(); // Get accounts from Andromeda store
+    const account = accounts[0]; // Use the first account
+    const userAddress = account?.address ?? ""; // Fallback to empty string if no address
 
     const handleMintShares = async () => {
         if (!client || !userAddress) {
-            return;
+            return; // Early return if client or user address is not available
         }
 
         const tokens = await query({
-            all_tokens: { limit: 9999 },
+            all_tokens: { limit: 9999 }, // Query all tokens with a limit
         });
 
         if (tokens.tokens.length > 0) {
@@ -42,21 +42,21 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
                 duration: 5000,
                 variant: "destructive",
             });
-            return;
+            return; // Early return if shares are already minted
         }
 
-        const batchSize = 100;
+        const batchSize = 100; // Define batch size for minting
         for (let batchStart = 0; batchStart < 100; batchStart += batchSize) {
-            const batchEnd = Math.min(batchStart + batchSize, 100);
+            const batchEnd = Math.min(batchStart + batchSize, 100); // Calculate batch end
             const batchTokens = Array.from({
                 length: batchEnd - batchStart,
             }).map((_, i) => ({
-                token_id: `org-share-${batchStart + i}`,
+                token_id: `org-share-${batchStart + i}`, // Generate token ID
                 extension: {
-                    publisher: "Ticket3",
+                    publisher: "Ticket3", // Set publisher
                 },
-                owner: userAddress, // Replace with actual user address
-                token_uri: "",
+                owner: userAddress, // Set owner to user address
+                token_uri: "", // Empty token URI
             }));
 
             const result = await simulate(
@@ -68,7 +68,7 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
                 [
                     {
                         denom: "uandr",
-                        amount: "500000",
+                        amount: "500000", // Set amount for simulation
                     },
                 ]
             );
@@ -83,10 +83,10 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
                     amount: [
                         {
                             denom: result.amount[0].denom,
-                            amount: result.amount[0].amount,
+                            amount: result.amount[0].amount, // Use simulated amount
                         },
                     ],
-                    gas: result.gas, // Replace with actual gas value if needed
+                    gas: result.gas, // Use simulated gas value
                 }
             );
 
@@ -97,7 +97,7 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
             });
 
             if (typeof window !== "undefined") {
-                window.location.reload();
+                window.location.reload(); // Reload the page to reflect changes
             }
         }
     };

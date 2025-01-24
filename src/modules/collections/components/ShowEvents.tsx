@@ -17,9 +17,10 @@ interface ShowEventsProps {
     CW721Address: string;
 }
 const ShowEvents: FC<ShowEventsProps> = (props) => {
-    const { toast } = useToast();
+    const { toast } = useToast(); // To display toast notifications
     const { CW721Address } = props;
-    const client = useAndromedaClient();
+    const client = useAndromedaClient(); // Custom hook to get Andromeda client
+
     interface Token {
         token_id: string;
         owner: string;
@@ -35,22 +36,22 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
         };
     }
 
-    const [tokens, setTokens] = useState<Token[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
+    const [tokens, setTokens] = useState<Token[]>([]); // State to store tokens
+    const [loading, setLoading] = useState(true); // State to manage loading state
+    const [filteredTokens, setFilteredTokens] = useState<Token[]>([]); // State to store filtered tokens
 
-    const query = useQueryContract(CW721Address);
+    const query = useQueryContract(CW721Address); // Query contract using address
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
+            setLoading(true); // Set loading to true before fetching data
             let tempTokenList = [];
             if (!client || !query) {
-                setLoading(false);
+                setLoading(false); // Stop loading if client or query is not available
                 return;
             }
             try {
-                const tokens = await query({ all_tokens: { limit: 9999 } });
+                const tokens = await query({ all_tokens: { limit: 9999 } }); // Fetch all tokens
 
                 const tokenList = tokens.tokens;
 
@@ -61,14 +62,14 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                         },
                     });
 
-                    const response = await fetch(token.info.token_uri);
+                    const response = await fetch(token.info.token_uri); // Fetch token metadata
 
                     const metadata = await response.json();
 
                     const hasValidEndDate = metadata.attributes.some(
                         (attribute: any) =>
                             attribute.trait_type === "endDate" &&
-                            new Date(attribute.value) >= new Date()
+                            new Date(attribute.value) >= new Date() // Check if the event is still valid
                     );
 
                     if (hasValidEndDate) {
@@ -78,13 +79,13 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                             metadata: metadata,
                         };
 
-                        tempTokenList.push(tokenData);
+                        tempTokenList.push(tokenData); // Add valid token to the list
                     }
                 }
 
-                setTokens(tempTokenList);
-                setFilteredTokens(tempTokenList);
-                setLoading(false);
+                setTokens(tempTokenList); // Update state with fetched tokens
+                setFilteredTokens(tempTokenList); // Initialize filtered tokens with all tokens
+                setLoading(false); // Set loading to false after fetching data
             } catch (error) {
                 toast({
                     title: "Error getting events",
@@ -92,14 +93,14 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                     duration: 5000,
                     variant: "destructive",
                 });
-                setLoading(false);
+                setLoading(false); // Set loading to false in case of error
 
                 console.error("Error querying contract:", error);
             }
         };
 
-        fetchData();
-    }, [query, client]);
+        fetchData(); // Fetch data on component mount
+    }, [query, client]); // Dependencies for useEffect
 
     return (
         <>
@@ -122,10 +123,11 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                                     const searchTerm =
                                         e.target.value.toLowerCase();
                                     setFilteredTokens(
-                                        tokens.filter((token) =>
-                                            token.metadata.name
-                                                .toLowerCase()
-                                                .includes(searchTerm)
+                                        tokens.filter(
+                                            (token) =>
+                                                token.metadata.name
+                                                    .toLowerCase()
+                                                    .includes(searchTerm) // Filter tokens based on search term
                                         )
                                     );
                                 }}
@@ -139,7 +141,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                         {filteredTokens.map((token, index) => (
                             <Link
                                 key={index}
-                                href={`/events/${token.token_id}`}
+                                href={`/events/${token.token_id}`} // Link to event details
                             >
                                 <Card className="max-w-sm overflow-hidden shadow-lg my-4 p-4 bg-black hover-bg-gray-800">
                                     <CardHeader>
@@ -149,7 +151,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                                             alt={token.metadata.name}
                                             onError={(e) => {
                                                 e.currentTarget.src =
-                                                    "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg";
+                                                    "https://betterstudio.com/wp-content/uploads/2019/05/1-1-instagram-1024x1024.jpg"; // Fallback image
                                             }}
                                         />
                                     </CardHeader>

@@ -13,43 +13,44 @@ interface SendSharesProps {
     OwnerAddress: string;
     CW721SharesAddress: string;
 }
+
 const SendShares: FC<SendSharesProps> = (props) => {
     const { OwnerAddress, MarketplaceAddress, CW721SharesAddress } = props;
-    const client = useAndromedaClient();
-    const [tokens, setTokens] = useState<string[]>([]);
+    const client = useAndromedaClient(); // Initialize Andromeda client
+    const [tokens, setTokens] = useState<string[]>([]); // State to store tokens
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // State to manage loading state
 
-    const query = useQueryContract(CW721SharesAddress);
-    const execute = useExecuteContract(CW721SharesAddress);
-    const simulate = useSimulateExecute(CW721SharesAddress);
+    const query = useQueryContract(CW721SharesAddress); // Hook to query contract
+    const execute = useExecuteContract(CW721SharesAddress); // Hook to execute contract
+    const simulate = useSimulateExecute(CW721SharesAddress); // Hook to simulate contract execution
 
     const fetchData = async () => {
-        setLoading(true);
+        setLoading(true); // Set loading to true before fetching data
         if (!client || !query) {
-            setLoading(false);
+            setLoading(false); // Stop loading if client or query is not available
             return;
         }
 
         const result = await query({
-            tokens: { limit: 100, owner: OwnerAddress },
+            tokens: { limit: 100, owner: OwnerAddress }, // Query tokens owned by the owner
         });
 
         const tokenList = result.tokens;
-        setTokens(tokenList);
-        setLoading(false);
+        setTokens(tokenList); // Update tokens state with fetched tokens
+        setLoading(false); // Set loading to false after fetching data
     };
 
     useEffect(() => {
-        fetchData();
+        fetchData(); // Fetch data when component mounts or dependencies change
     }, [query, client]);
 
     const jsonToBase64 = (json: any) => {
-        return Buffer.from(JSON.stringify(json)).toString("base64");
+        return Buffer.from(JSON.stringify(json)).toString("base64"); // Convert JSON to base64 string
     };
 
     const handleSendTicketToMarketplace = async (token_id: string) => {
-        setLoading(true);
+        setLoading(true); // Set loading to true before sending ticket
         if (!client) {
             return;
         }
@@ -57,13 +58,12 @@ const SendShares: FC<SendSharesProps> = (props) => {
         const msg = jsonToBase64({
             start_sale: {
                 coin_denom: {
-                    native_token: "uandr",
+                    native_token: "uandr", // Use native token for sale
                 },
                 recipient: null,
                 start_time: null,
-                // Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things
-                duration: null,
-                price: "5000",
+                duration: null, // No duration to allow organizer flexibility
+                price: "5000", // Set price for the ticket
             },
         });
 
@@ -76,7 +76,7 @@ const SendShares: FC<SendSharesProps> = (props) => {
                         msg: msg,
                     },
                 },
-                [{ denom: "uandr", amount: "500000" }]
+                [{ denom: "uandr", amount: "500000" }] // Simulate with a specific amount
             );
 
             await execute(
@@ -94,15 +94,15 @@ const SendShares: FC<SendSharesProps> = (props) => {
                             amount: result.amount[0].amount,
                         },
                     ],
-                    gas: result.gas,
+                    gas: result.gas, // Use gas from simulation result
                 }
             );
 
-            fetchData();
-            setLoading(false);
+            fetchData(); // Refresh data after sending ticket
+            setLoading(false); // Set loading to false after operation
         } catch (error) {
-            console.error("Error sending ticket to marketplace:", error);
-            setLoading(false);
+            console.error("Error sending ticket to marketplace:", error); // Log error if any
+            setLoading(false); // Set loading to false in case of error
         }
     };
 
