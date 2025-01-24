@@ -89,6 +89,16 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
                     gas: result.gas, // Replace with actual gas value if needed
                 }
             );
+
+            toast({
+                title: "Shares minted",
+                description: "Shares have been minted",
+                duration: 5000,
+            });
+
+            if (typeof window !== "undefined") {
+                window.location.reload();
+            }
         }
     };
 
