@@ -1,10 +1,10 @@
 import { ShowEvents } from "@/modules/collections";
-import Layout from "@/modules/general/components/Layout";
+import { CW721EventsAddress } from "@/ContractAddresses";
 
 const Page = async () => {
     return (
         <main>
-            <ShowEvents CW721Address="andr1zmsh5cdv42nunkx4z3enfs0uyn2sxz82qtfkfwuslvzkmhmtennql5a6tn" />
+            <ShowEvents CW721Address={CW721EventsAddress} />
         </main>
     );
 };

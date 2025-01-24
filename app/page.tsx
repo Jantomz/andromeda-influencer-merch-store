@@ -2,6 +2,11 @@ import Layout from "@/modules/general/components/Layout";
 import { PurchaseShares } from "@/modules/marketplace/components";
 import { Center, Image, Link, Text, VStack } from "@chakra-ui/react";
 import React from "react";
+import {
+    OwnerAddress,
+    SharesMarketplaceAddress,
+    CW721SharesAddress,
+} from "@/ContractAddresses";
 
 interface Props {}
 
@@ -29,9 +34,9 @@ const Page = async (props: Props) => {
                 </Text>
             </VStack>
             <PurchaseShares
-                CW721SharesAddress="andr1qhndf3kcpqxqxc33p042wae6d95svr5an292wt765n8jxq2wccgq0vyldt"
-                MarketplaceAddress="andr1ld0mdudnnkt9vh8zcwqt0a6qc8wvmjh927j8y8kjy6zcn0skhdds78pkd5"
-                OwnerAddress="andr1eq2npynjfyx52utu34kht3p5vhp3yflt4qr2gx"
+                CW721SharesAddress={CW721SharesAddress}
+                MarketplaceAddress={SharesMarketplaceAddress}
+                OwnerAddress={OwnerAddress}
             />
         </Center>
     );

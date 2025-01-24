@@ -18,6 +18,8 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
     const [buyableShares, setBuyableShares] = useState<any[]>([]);
     // TODO: Fix any
     const [loading, setLoading] = useState(true);
+    const [sharesProcessed, setSharesProcessed] = useState(0);
+    const [sharesLength, setSharesLength] = useState(0);
 
     const queryShares = useQueryContract(CW721SharesAddress);
     const simulatePurchase = useSimulateExecute(MarketplaceAddress);
@@ -29,17 +31,21 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
             return;
         }
         try {
+            setSharesProcessed(0);
             const tokens = await queryShares({
                 all_tokens: {
                     limit: 200,
                 },
             });
+            setSharesLength(tokens.tokens.length);
 
             let tempSharesList = [];
 
             const tokenList = tokens.tokens;
 
             console.log("TokenList:", tokenList);
+
+            let count = 0;
 
             for (const token of tokenList) {
                 console.log("Token:", token);
@@ -52,11 +58,15 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                 if (tokenInfo.access.owner === MarketplaceAddress) {
                     tempSharesList.push(token);
                 }
+                count++;
+                setSharesProcessed(count);
             }
 
             setBuyableShares(tempSharesList);
 
             setLoading(false);
+            setSharesLength(0);
+            setSharesProcessed(0);
         } catch (error) {
             console.error("Error querying contract:", error);
         }
@@ -64,6 +74,10 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
 
     useEffect(() => {
         fetchData();
+
+        return () => {
+            setBuyableShares([]);
+        };
     }, [queryShares, client]);
 
     const handlePurchaseShare = async () => {
@@ -131,6 +145,10 @@ const PurchaseShares: FC<PurchaseSharesProps> = (props) => {
                     <div className="flex justify-center items-center space-x-2">
                         <div className="w-4 h-4 rounded-full animate-spin border-2 border-solid border-blue-500 border-t-transparent"></div>
                         <span>Loading...</span>
+                        <br></br>
+                        <span>
+                            {sharesProcessed}/{sharesLength} Shares Loaded
+                        </span>
                     </div>
                 </div>
             ) : (

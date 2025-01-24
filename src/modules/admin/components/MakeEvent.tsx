@@ -61,6 +61,26 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
             return;
         }
 
+        //         proxy_message
+        // :
+        // msg
+        // :
+        // "ewptaW50OiB7CnRva2VuX2lkOiAiVGVzdGluZyBQcm94eSIsCmV4dGVuc2lvbjogewogICAgICAgICAgICAgICAgICAgICAgICBwdWJsaXNoZXI6ICJBcHAgRGV2ZWxvcGVyIiwKICAgICAgICAgICAgICAgICAgICB9LAogICAgICAgICAgICAgICAgICAgIG93bmVyOiAiYW5kcjFlcTJucHluamZ5eDUydXR1MzRraHQzcDV2aHAzeWZsdDRxcjJneCIsCn0KfQ=="
+        // name
+        // :
+        // "events"
+
+        // {
+        //     mint: {
+        //         token_id: "Testing Proxy",
+        //         extension: {
+        //             publisher: "App Developer",
+        //         },
+        //         owner: "andr1eq2npynjfyx52utu34kht3p5vhp3yflt4qr2gx",
+        //         token_uri: null,
+        //     },
+        // }
+
         const result = await simulate(
             {
                 mint: {
