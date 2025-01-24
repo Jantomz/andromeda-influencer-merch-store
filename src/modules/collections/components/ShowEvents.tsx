@@ -66,21 +66,13 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
 
                     const metadata = await response.json();
 
-                    const hasValidEndDate = metadata.attributes.some(
-                        (attribute: any) =>
-                            attribute.trait_type === "endDate" &&
-                            new Date(attribute.value) >= new Date() // Check if the event is still valid
-                    );
+                    const tokenData = {
+                        token_id: tokenList[i],
+                        owner: token.access.owner,
+                        metadata: metadata,
+                    };
 
-                    if (hasValidEndDate) {
-                        const tokenData = {
-                            token_id: tokenList[i],
-                            owner: token.access.owner,
-                            metadata: metadata,
-                        };
-
-                        tempTokenList.push(tokenData); // Add valid token to the list
-                    }
+                    tempTokenList.push(tokenData); // Add valid token to the list
                 }
 
                 setTokens(tempTokenList); // Update state with fetched tokens
