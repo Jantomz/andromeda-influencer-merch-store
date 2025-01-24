@@ -24,37 +24,37 @@ const Page = async (props: Props) => {
             <section>
                 <div className="h-[300px]"></div>
                 <div className="flex justify-center items-center">
-                    <h1 className="text-5xl text-white text-left w-1/3 font-bold">
+                    <h1 className="text-5xl max-md:text-3xl text-white text-left w-1/3 max-md:w-3/4 font-bold">
                         More Secure Tickets...
                     </h1>
                 </div>
                 <div className="h-[300px]"></div>
-                <div className="flex justify-center items-center">
-                    <h1 className="text-5xl text-white text-left w-1/3 font-bold">
+                <div className="flex flex-col max-md:flex-col justify-center items-center gap-4">
+                    <h1 className="text-5xl max-md:text-3xl text-white text-left w-1/3 max-md:w-3/4 font-bold">
                         More Community-Owned Events...
                     </h1>
                     <ShowEventStats CW721Address={CW721EventsAddress} />
                 </div>
                 <div className="h-[300px]"></div>
-                <div className="flex justify-center items-center">
+                <div className="flex flex-col max-md:flex-col justify-center items-center gap-4">
                     <ShowShares SplitterAddress={SplitterAddress} />
-                    <h1 className="text-5xl text-white text-right w-1/3 font-bold">
+                    <h1 className="text-5xl max-md:text-3xl text-white text-right w-1/3 max-md:w-3/4 font-bold">
                         More Community-Owned Shares...
                     </h1>
                 </div>
                 <div className="h-[300px]"></div>
-                <h1 className="text-7xl text-white text-center font-bold">
+                <h1 className="text-7xl max-md:text-4xl text-white text-center font-bold">
                     More Community-Owned...
                 </h1>
                 <div className="h-[300px]"></div>
-                <h1 className="text-7xl text-white text-center font-bold">
+                <h1 className="text-7xl max-md:text-4xl text-white text-center font-bold">
                     More Community
                 </h1>
                 <div className="flex justify-center items-center">
                     <img
                         src="/Ticket3_Logo.png"
                         alt="Logo"
-                        className="w-1/4 h-auto"
+                        className="w-1/4 max-md:w-1/2 h-auto"
                     />
                 </div>
             </section>

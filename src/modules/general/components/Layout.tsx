@@ -11,12 +11,12 @@ const Layout: FC<LayoutProps> = (props) => {
     const { children } = props;
 
     return (
-        <div className="min-h-screen">
-            <div>
-                <Navbar />
-            </div>
+        <div className="min-h-screen flex flex-col">
+            <Navbar />
             <hr className="my-4" />
-            <div className="px-6 py-4 w-3/4 mx-auto">{children}</div>
+            <div className="flex-grow px-4 py-4 w-3/4 md:w-full mx-auto">
+                {children}
+            </div>
             <footer className="mt-8 text-center text-white">
                 Created with <span className="text-red-500">❤️</span> by{" "}
                 <a
