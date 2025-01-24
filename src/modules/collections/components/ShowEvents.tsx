@@ -188,4 +188,3 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
     );
 };
 export default ShowEvents;
-</div></Link>
