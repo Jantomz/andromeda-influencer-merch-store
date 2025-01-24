@@ -1,4 +1,3 @@
-import { useExecuteContract, useSimulateExecute } from "@/lib/andrjs";
 import { MakeEvent, MakeShares, UpdateSharesSplits } from "@/modules/admin";
 import SendShares from "@/modules/admin/components/SendShares";
 import React from "react";
