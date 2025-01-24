@@ -14,7 +14,6 @@ import { OwnerAddress } from "@/ContractAddresses";
 
 import { ConnectWallet } from "@/modules/wallet";
 import { useAndromedaStore } from "@/zustand/andromeda";
-import { Navigation } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -33,15 +32,17 @@ const Navbar = (props: Props) => {
         address.slice(0, 6) + "......" + address.slice(address.length - 4);
 
     return (
-        <div className="p-4 z-40">
+        <div className="p-4 z-40 mt-3">
             <NavigationMenu className="mx-auto">
                 <NavigationMenuList className="gap-4">
                     <NavigationMenuItem>
-                        <img
-                            src="/Ticket3_Logo.png"
-                            alt="Ticket3 Logo"
-                            className="w-[40px] h-[40px]"
-                        />
+                        <Link href="/" legacyBehavior passHref>
+                            <img
+                                src="/Ticket3_Logo.png"
+                                alt="Ticket3 Logo"
+                                className="w-[40px] h-[40px]"
+                            />
+                        </Link>
                     </NavigationMenuItem>
                     <NavigationMenuItem>
                         <Link href="/" legacyBehavior passHref>

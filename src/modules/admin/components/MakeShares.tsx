@@ -6,6 +6,7 @@ import {
     useQueryContract,
     useSimulateExecute,
 } from "@/lib/andrjs";
+import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { MakeEvent } from "@/modules/admin";
 import Layout from "@/modules/general/components/Layout";
 import { useAndromedaStore } from "@/zustand/andromeda";
@@ -16,6 +17,7 @@ interface MakeSharesProps {
 }
 
 const MakeShares: FC<MakeSharesProps> = (props) => {
+    const client = useAndromedaClient;
     const { toast } = useToast();
     const { CW721SharesAddress } = props;
     const execute = useExecuteContract(CW721SharesAddress);
@@ -27,6 +29,10 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
     const userAddress = account?.address ?? "";
 
     const handleMintShares = async () => {
+        if (!client || !userAddress) {
+            return;
+        }
+
         const tokens = await query({
             all_tokens: {},
         });
@@ -49,7 +55,7 @@ const MakeShares: FC<MakeSharesProps> = (props) => {
             }).map((_, i) => ({
                 token_id: `org-share-${batchStart + i}`,
                 extension: {
-                    publisher: "App Developer",
+                    publisher: "Ticket3",
                 },
                 owner: userAddress, // Replace with actual user address
                 token_uri: "",

@@ -29,10 +29,10 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
     const { CW721Address, CW721TicketAddress, token_id, MarketplaceAddress } =
         props;
     const client = useAndromedaClient();
+
     const [buyableTiersTicketsList, setBuyableTiersTicketsList] = useState<
         any[]
     >([]);
-    // TODO: Fix any
     const [token, setToken] = useState<any>();
 
     const [loading, setLoading] = useState(true);
@@ -47,6 +47,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
     const fetchData = async () => {
         setLoading(true);
         if (!client || !query) {
+            setLoading(false);
             return;
         }
         try {
@@ -98,8 +99,6 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
             }
 
             setBuyableTiersTicketsList(totalTiersList);
-            // console.log(tiersList);
-            // console.log(JSON.stringify(totalTiersList));
 
             setToken(tokenData);
             setLoading(false);
@@ -121,8 +120,9 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
     }, [query, client]);
 
     const handlePurchaseTicket = async (tier: string) => {
-        console.log(tier);
+        setLoading(true);
         if (!client) {
+            setLoading(false);
             return;
         }
 
@@ -139,7 +139,6 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                 }) => t.ticket.access.owner === MarketplaceAddress
             );
 
-        console.log(ticket);
         try {
             const result = await simulatePurchase(
                 {
@@ -157,8 +156,6 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                     },
                 ]
             );
-
-            console.log("Purchase ticket simulation result:", result);
 
             const price = ticket.metadata.attributes.find(
                 (attr: any) => attr.trait_type === "price"
@@ -194,6 +191,7 @@ const PurchaseTickets: FC<PurchaseTicketsProps> = (props) => {
                 description: "You have successfully purchased a ticket",
                 duration: 5000,
             });
+            setLoading(false);
 
             fetchData();
         } catch (error) {

@@ -20,10 +20,23 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
     const { toast } = useToast();
     const { CW721Address } = props;
     const client = useAndromedaClient();
-    // TODO: Fix any
-    const [tokens, setTokens] = useState<any[]>([]);
+    interface Token {
+        token_id: string;
+        owner: string;
+        metadata: {
+            name: string;
+            description: string;
+            image: string;
+            attributes: {
+                display_type?: string;
+                trait_type?: string;
+                value: string;
+            }[];
+        };
+    }
+
+    const [tokens, setTokens] = useState<Token[]>([]);
     const [loading, setLoading] = useState(true);
-    // TODO: tokens query can take in the owner address as a parameter
 
     const query = useQueryContract(CW721Address);
 
@@ -32,12 +45,11 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
             setLoading(true);
             let tempTokenList = [];
             if (!client || !query) {
+                setLoading(false);
                 return;
             }
             try {
                 const tokens = await query({ all_tokens: {} });
-
-                console.log(tokens);
 
                 const tokenList = tokens.tokens;
 
@@ -58,7 +70,6 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                         metadata: metadata,
                     };
 
-                    console.log(tokenData);
                     tempTokenList.push(tokenData);
                 }
 

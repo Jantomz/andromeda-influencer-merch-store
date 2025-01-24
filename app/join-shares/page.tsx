@@ -12,7 +12,6 @@ import ShowShares from "@/modules/collections/components/ShowShares";
 interface Props {}
 
 const Page = async (props: Props) => {
-    // TODO: Add stats on this page, number of events, graph of shareholders
     return (
         <main>
             {/* Find a place to put these */}

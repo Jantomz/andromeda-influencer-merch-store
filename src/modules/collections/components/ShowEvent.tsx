@@ -39,12 +39,43 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
     } = props;
     const client = useAndromedaClient();
 
-    const [tiersTicketsList, setTiersTicketsList] = useState<any[]>([]);
+    // Types for the ticket tiers, a bit risky in type checks
+    interface Tier {
+        title: string;
+        tickets: any[];
+    }
+
+    const [tiersTicketsList, setTiersTicketsList] = useState<Tier[]>([]);
+
+    interface SellableTier {
+        title: string;
+        tickets: Array<{
+            ticket: any;
+            token_id: string;
+            metadata: any;
+        }>;
+    }
+
     const [sellableTiersTicketsList, setSellableTiersTicketsList] = useState<
-        any[]
+        SellableTier[]
     >([]);
-    // TODO: Fix any
-    const [token, setToken] = useState<any>();
+
+    interface Token {
+        token_id: string;
+        owner: string;
+        metadata: {
+            image: string;
+            name: string;
+            description: string;
+            attributes: Array<{
+                trait_type: string;
+                value: any;
+                display_type?: string;
+            }>;
+        };
+    }
+
+    const [token, setToken] = useState<Token | undefined>();
 
     const [loading, setLoading] = useState(true);
 
@@ -56,6 +87,7 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
     const fetchData = async () => {
         setLoading(true);
         if (!client || !query) {
+            setLoading(false);
             return;
         }
         try {
@@ -117,8 +149,6 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
 
             setTiersTicketsList(tiersList);
             setSellableTiersTicketsList(totalTiersList);
-            // console.log(tiersList);
-            // console.log(JSON.stringify(totalTiersList));
 
             setToken(tokenData);
             setLoading(false);
@@ -146,11 +176,10 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
         ticket_token_id: string;
         ticket_price: string;
         ticket_denom: string;
-        duration?: number;
     }) => {
         setLoading(true);
-        console.log(ticket);
         if (!client) {
+            setLoading(false);
             return;
         }
 
@@ -165,14 +194,11 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                     msg: "eyJzZW5kIjp7fX0=",
                 },
                 start_time: null,
-                // duration: ticket.duration || 7200000,
-                // TODO: Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things
+                // Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things
                 duration: null,
                 price: ticket.ticket_price.toString(),
             },
         });
-
-        console.log(msg);
 
         try {
             const result = await simulateTicket(
@@ -482,10 +508,8 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                                                         onClick={() =>
                                                             handleSendTicketToMarketplace(
                                                                 {
-                                                                    // TODO: Change the duration
                                                                     ticket_token_id:
                                                                         ticket.token_id,
-                                                                    duration: 7200000,
                                                                     ticket_price:
                                                                         ticket.metadata.attributes.find(
                                                                             (

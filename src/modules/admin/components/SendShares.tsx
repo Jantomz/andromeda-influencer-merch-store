@@ -16,8 +16,7 @@ interface SendSharesProps {
 const SendShares: FC<SendSharesProps> = (props) => {
     const { OwnerAddress, MarketplaceAddress, CW721SharesAddress } = props;
     const client = useAndromedaClient();
-    // TODO: Fix any
-    const [tokens, setTokens] = useState<any[]>([]);
+    const [tokens, setTokens] = useState<string[]>([]);
 
     const [loading, setLoading] = useState(true);
 
@@ -28,14 +27,13 @@ const SendShares: FC<SendSharesProps> = (props) => {
     const fetchData = async () => {
         setLoading(true);
         if (!client || !query) {
+            setLoading(false);
             return;
         }
 
         const result = await query({
             tokens: { limit: 100, owner: OwnerAddress },
         });
-
-        console.log(result);
 
         const tokenList = result.tokens;
         setTokens(tokenList);
@@ -63,14 +61,11 @@ const SendShares: FC<SendSharesProps> = (props) => {
                 },
                 recipient: null,
                 start_time: null,
-                // duration: ticket.duration || 7200000,
-                // TODO: Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things
+                // Duration is set to nothing so that the organizer can take tickets off when they please, they don't have to continuously do things
                 duration: null,
                 price: "5000",
             },
         });
-
-        console.log(msg);
 
         try {
             const result = await simulate(
@@ -83,8 +78,6 @@ const SendShares: FC<SendSharesProps> = (props) => {
                 },
                 [{ denom: "uandr", amount: "500000" }]
             );
-
-            console.log(result);
 
             await execute(
                 {
@@ -148,7 +141,7 @@ const SendShares: FC<SendSharesProps> = (props) => {
                                                     token
                                                 )
                                             }
-                                            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                                            className="bg-black border-white hover:bg-gray-800 border text-white px-4 py-2 rounded-lg"
                                         >
                                             Send to Marketplace
                                         </button>

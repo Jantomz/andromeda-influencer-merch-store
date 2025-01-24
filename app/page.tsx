@@ -1,10 +1,11 @@
+import { ShowEventStats, ShowShares } from "@/modules/collections";
 import { ParticlesObject } from "./particles";
 import React from "react";
+import { CW721EventsAddress, SplitterAddress } from "@/ContractAddresses";
 
 interface Props {}
 
 const Page = async (props: Props) => {
-    // TODO: Add stats on this page, number of events, graph of shareholders
     return (
         <main>
             <div className="h-24"></div>
@@ -19,6 +20,44 @@ const Page = async (props: Props) => {
                     <ParticlesObject position="absolute" />
                 </div>
             </header>
+            <div className="h-[500px]"></div>
+            <section>
+                <div className="h-[300px]"></div>
+                <div className="flex justify-center items-center">
+                    <h1 className="text-5xl text-white text-left w-1/3 font-bold">
+                        More Secure Tickets...
+                    </h1>
+                </div>
+                <div className="h-[300px]"></div>
+                <div className="flex justify-center items-center">
+                    <h1 className="text-5xl text-white text-left w-1/3 font-bold">
+                        More Community-Owned Events...
+                    </h1>
+                    <ShowEventStats CW721Address={CW721EventsAddress} />
+                </div>
+                <div className="h-[300px]"></div>
+                <div className="flex justify-center items-center">
+                    <ShowShares SplitterAddress={SplitterAddress} />
+                    <h1 className="text-5xl text-white text-right w-1/3 font-bold">
+                        More Community-Owned Shares...
+                    </h1>
+                </div>
+                <div className="h-[300px]"></div>
+                <h1 className="text-7xl text-white text-center font-bold">
+                    More Community-Owned...
+                </h1>
+                <div className="h-[300px]"></div>
+                <h1 className="text-7xl text-white text-center font-bold">
+                    More Community
+                </h1>
+                <div className="flex justify-center items-center">
+                    <img
+                        src="/Ticket3_Logo.png"
+                        alt="Logo"
+                        className="w-1/4 h-auto"
+                    />
+                </div>
+            </section>
         </main>
     );
 };

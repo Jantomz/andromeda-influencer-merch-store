@@ -24,6 +24,11 @@ const ShowShares: FC<ShowSharesProps> = (props) => {
     const handleCheckSharesDisparity = async () => {
         setLoading(true);
 
+        if (!client || !querySplitter) {
+            setLoading(false);
+            return;
+        }
+
         try {
             const splitterConfig = await querySplitter({
                 get_splitter_config: {},

@@ -1,30 +1,21 @@
-import { HStack, Image, Link, Text } from "@chakra-ui/react";
-import React, { FC } from "react"
+import React, { FC } from "react";
 
-interface Props {
-}
+interface Props {}
 
 const PoweredByLogo: FC<Props> = (props) => {
-    const { } = props;
+    const {} = props;
     return (
-        <Link href='https://www.andromedaprotocol.io/' target="_blank">
-            <HStack
-                position='fixed'
-                left='2'
-                bottom='2'
-                maxW='fit-content' pl='1.5' pr='3' py='1' rounded='lg' spacing={1}
-                bg='gray.900'
-            >
-                <Image
-                    src='/logo.png'
-                    h='6'
-                />
-                <Text fontSize='sm' color='white'>
-                    Powered by Andromeda
-                </Text>
-            </HStack>
-        </Link>
-    )
-}
+        <a
+            href="https://www.andromedaprotocol.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            <div className="fixed left-2 bottom-2 max-w-fit pl-1.5 pr-3 py-1 rounded-lg flex items-center space-x-1 bg-gray-900">
+                <img src="/logo.png" className="h-6" alt="Andromeda Logo" />
+                <span className="text-sm text-white">Powered by Andromeda</span>
+            </div>
+        </a>
+    );
+};
 
-export default PoweredByLogo
+export default PoweredByLogo;

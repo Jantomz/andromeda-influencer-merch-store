@@ -8,6 +8,7 @@ import {
 import useAndromedaClient from "@/lib/andrjs/hooks/useAndromedaClient";
 import { useAndromedaStore } from "@/zustand/andromeda";
 import { useToast } from "@/hooks/use-toast";
+import { OwnerAddress, TicketsMarketplaceAddress } from "@/ContractAddresses";
 
 interface ApproveTicketProps {
     CW721POAAddress: string;
@@ -34,11 +35,20 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
     const query = useQueryContract(CW721TicketAddress);
 
     const handleApprove = async () => {
-        // TODO: Make sure the ticket is not owned by the marketplace or the event creator, and has not been approved yet
-        // TODO: Only the event creator can approve the ticket
         setIsLoading(true);
         if (!client || !userAddress) {
             setIsLoading(false);
+            return;
+        }
+
+        if (userAddress !== OwnerAddress) {
+            setIsLoading(false);
+            toast({
+                title: "Error approving ticket",
+                description: "You cannot approve this ticket",
+                duration: 5000,
+                variant: "destructive",
+            });
             return;
         }
 
@@ -49,13 +59,27 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
                 },
             });
 
+            if (
+                token.access.owner === userAddress ||
+                token.access.owner === TicketsMarketplaceAddress ||
+                token.access.owner === OwnerAddress
+            ) {
+                setIsLoading(false);
+                toast({
+                    title: "Error approving ticket",
+                    description: "You cannot approve this ticket",
+                    duration: 5000,
+                    variant: "destructive",
+                });
+                return;
+            }
+
             const result = await simulate(
                 {
                     mint: {
                         token_id: ticket + "-approved",
                         extension: {
-                            // TODO: Change this
-                            publisher: "App Developer",
+                            publisher: "Ticket3",
                         },
                         owner: token.access.owner,
                     },
@@ -68,7 +92,7 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
                     mint: {
                         token_id: ticket + "-approved",
                         extension: {
-                            publisher: "App Developer",
+                            publisher: "Ticket3",
                         },
                         owner: token.access.owner,
                     },
@@ -84,15 +108,9 @@ const ApproveTicket: FC<ApproveTicketProps> = (props) => {
                 }
             );
 
-            console.log("data", data);
-
             if (!data.gasUsed) {
                 return;
             }
-
-            // TODO: show toast
-
-            // Mint Tickets
 
             setIsLoading(false);
             toast({

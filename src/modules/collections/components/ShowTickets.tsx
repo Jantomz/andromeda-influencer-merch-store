@@ -38,14 +38,13 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
             setLoading(true);
             let tempTokenList = [];
             if (!client || !query) {
+                setLoading(false);
                 return;
             }
             try {
                 const tokens = await query({ all_tokens: {} });
 
                 const approvedTokens = await queryPOA({ all_tokens: {} });
-
-                console.log(tokens);
 
                 const tokenList = tokens.tokens;
                 const approvedTokenList = approvedTokens.tokens;
@@ -71,7 +70,6 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                         metadata: metadata,
                     };
 
-                    console.log(tokenData);
                     tempTokenList.push(tokenData);
                 }
 
@@ -91,12 +89,9 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                         owner: token.access.owner,
                     };
 
-                    console.log(tokenData);
                     const existingTokenIndex = tempTokenList.findIndex(
                         (t) => t.token_id + "-approved" === approvedTokenList[i]
                     );
-
-                    console.log("existingTokenIndex", existingTokenIndex);
 
                     if (existingTokenIndex !== -1) {
                         tempTokenList[
@@ -135,7 +130,6 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
     };
 
     const categorizeTokens = (tokens: any[]) => {
-        console.log("tokens", tokens);
         const now = new Date();
         const pastEvents = tokens.filter(
             (token) =>

@@ -79,8 +79,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                     mint: {
                         token_id: t_id,
                         extension: {
-                            // TODO: Change this
-                            publisher: "App Developer",
+                            publisher: "Ticket3",
                         },
                         owner: userAddress,
                         token_uri: m_uri,
@@ -94,7 +93,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                     mint: {
                         token_id: t_id,
                         extension: {
-                            publisher: "App Developer",
+                            publisher: "Ticket3",
                         },
                         owner: userAddress,
                         token_uri: m_uri,
@@ -110,8 +109,6 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                     gas: result.gas,
                 }
             );
-
-            console.log("data", data);
 
             if (!data.gasUsed) {
                 return;
@@ -149,9 +146,6 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                 }),
             });
 
-            console.log(dbResult);
-            // TODO: show toast
-
             // Mint Tickets
             for (const tier of tiers) {
                 const batchSize = 100;
@@ -169,8 +163,7 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                     }).map((_, i) => ({
                         token_id: `${t_id}-ticket-${tier.title}-${batchStart + i}`,
                         extension: {
-                            // TODO: Change this
-                            publisher: "App Developer",
+                            publisher: "Ticket3",
                         },
                         owner: userAddress,
                         token_uri:
@@ -265,10 +258,6 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                             ),
                         }
                     );
-
-                    console.log(dbTicketResult);
-
-                    console.log("ticketData", ticketData);
                 }
             }
             setIsLoading(false);
@@ -335,37 +324,6 @@ const MakeEvent: FC<MakeEventProps> = (props) => {
                                 baseURL +
                                 "/api/event-metadata?token_id=" +
                                 tokenId;
-
-                            // console.log(
-                            //     JSON.stringify({
-                            //         token_id: tokenId,
-                            //         name,
-                            //         description,
-                            //         image,
-                            //         attributes: [
-                            //             {
-                            //                 display_type: "Start Date",
-                            //                 trait_type: "dateStart",
-                            //                 value: dateStart,
-                            //             },
-                            //             {
-                            //                 display_type: "End Date",
-                            //                 trait_type: "dateEnd",
-                            //                 value: dateEnd,
-                            //             },
-                            //             {
-                            //                 display_type: "Location",
-                            //                 trait_type: "location",
-                            //                 value: location,
-                            //             },
-                            //             {
-                            //                 display_type: "Ticket Tiers",
-                            //                 trait_type: "tiers",
-                            //                 value: tiers,
-                            //             },
-                            //         ],
-                            //     })
-                            // );
 
                             await handleMint(
                                 tokenId,

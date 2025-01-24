@@ -47,7 +47,12 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
 
     const handleCheckSharesDisparity = async () => {
         setLoading(true);
-        // TODO: Do these checks for all the functions
+
+        if (!queryShares || !querySplitter || !client) {
+            setLoading(false);
+            return;
+        }
+
         const shares = await queryShares({
             all_tokens: {
                 limit: 100,
@@ -105,8 +110,6 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
                 get_splitter_config: {},
             });
 
-            console.log(updatedRecipients);
-            console.log(splitterConfig.config.recipients);
             const currentConfig = splitterConfig.config.recipients;
             const correctConfig = updatedRecipients;
 
@@ -126,12 +129,8 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
             );
             setGraphData(graphData);
 
-            console.log(JSON.stringify(currentConfig));
-            console.log(JSON.stringify(correctConfig));
-
             const isConfigSame =
                 JSON.stringify(currentConfig) === JSON.stringify(correctConfig);
-            console.log(isConfigSame);
             if (!isConfigSame) {
                 setSharesUpdated(false);
             } else {
@@ -190,95 +189,100 @@ const UpdateSharesSplits: FC<UpdateSharesSplitsProps> = (props) => {
 
         setLoading(true);
         setSharesProcessed(0);
-        const shares = await queryShares({
-            all_tokens: {
-                limit: 100,
-            },
-        });
-        setSharesLength(shares.tokens.length);
-
-        let tempSharesList = [];
-
-        for (const token of shares.tokens) {
-            const shareInfo = await queryShares({
-                all_nft_info: {
-                    token_id: token,
+        try {
+            const shares = await queryShares({
+                all_tokens: {
+                    limit: 100,
                 },
             });
-            console.log(shareInfo);
+            setSharesLength(shares.tokens.length);
 
-            tempSharesList.push(shareInfo);
-            setSharesProcessed((prev) => prev + 1);
-        }
+            let tempSharesList = [];
 
-        const sharesCount: { [address: string]: number } = {};
-
-        for (const share of tempSharesList) {
-            let ownerAddress = share.access.owner;
-            if (ownerAddress === MarketplaceAddress) {
-                ownerAddress = OwnerAddress;
-            }
-            if (sharesCount[ownerAddress]) {
-                sharesCount[ownerAddress] += 1;
-            } else {
-                sharesCount[ownerAddress] = 1;
-            }
-        }
-        const totalShares = Object.values(sharesCount).reduce(
-            (a, b) => a + b,
-            0
-        );
-
-        const updatedRecipients = Object.entries(sharesCount).map(
-            ([address, count]) => ({
-                recipient: {
-                    address,
-                    ibc_recovery_address: null,
-                    msg: null,
-                },
-                percent: (count / totalShares).toFixed(2),
-            })
-        );
-
-        console.log(updatedRecipients);
-
-        const result = await simulateSplitter(
-            {
-                update_recipients: {
-                    recipients: updatedRecipients,
-                },
-            },
-            []
-        );
-
-        console.log(result);
-        // TODO: When this fails or gets cancelled, handle
-        await executeSplitter(
-            {
-                update_recipients: {
-                    recipients: updatedRecipients,
-                },
-            },
-            {
-                amount: [
-                    {
-                        denom: result.amount[0].denom,
-                        amount: result.amount[0].amount,
+            for (const token of shares.tokens) {
+                const shareInfo = await queryShares({
+                    all_nft_info: {
+                        token_id: token,
                     },
-                ],
-                gas: result.gas,
-            }
-        );
+                });
 
-        setSharesLength(0);
-        setSharesProcessed(0);
-        setSharesUpdated(true);
-        setLoading(false);
-        toast({
-            title: "Shares Splits Updated",
-            description: "Shares splits have been updated",
-            duration: 5000,
-        });
+                tempSharesList.push(shareInfo);
+                setSharesProcessed((prev) => prev + 1);
+            }
+
+            const sharesCount: { [address: string]: number } = {};
+
+            for (const share of tempSharesList) {
+                let ownerAddress = share.access.owner;
+                if (ownerAddress === MarketplaceAddress) {
+                    ownerAddress = OwnerAddress;
+                }
+                if (sharesCount[ownerAddress]) {
+                    sharesCount[ownerAddress] += 1;
+                } else {
+                    sharesCount[ownerAddress] = 1;
+                }
+            }
+            const totalShares = Object.values(sharesCount).reduce(
+                (a, b) => a + b,
+                0
+            );
+
+            const updatedRecipients = Object.entries(sharesCount).map(
+                ([address, count]) => ({
+                    recipient: {
+                        address,
+                        ibc_recovery_address: null,
+                        msg: null,
+                    },
+                    percent: (count / totalShares).toFixed(2),
+                })
+            );
+
+            const result = await simulateSplitter(
+                {
+                    update_recipients: {
+                        recipients: updatedRecipients,
+                    },
+                },
+                []
+            );
+
+            await executeSplitter(
+                {
+                    update_recipients: {
+                        recipients: updatedRecipients,
+                    },
+                },
+                {
+                    amount: [
+                        {
+                            denom: result.amount[0].denom,
+                            amount: result.amount[0].amount,
+                        },
+                    ],
+                    gas: result.gas,
+                }
+            );
+
+            setSharesLength(0);
+            setSharesProcessed(0);
+            setSharesUpdated(true);
+            setLoading(false);
+            toast({
+                title: "Shares Splits Updated",
+                description: "Shares splits have been updated",
+                duration: 5000,
+            });
+        } catch (error) {
+            toast({
+                title: "Error updating shares",
+                description: "There was an error updating shares",
+                duration: 5000,
+                variant: "destructive",
+            });
+            setLoading(false);
+        }
     };
 
     return (
