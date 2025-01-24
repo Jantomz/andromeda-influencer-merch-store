@@ -37,6 +37,7 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
 
     const [tokens, setTokens] = useState<Token[]>([]);
     const [loading, setLoading] = useState(true);
+    const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
 
     const query = useQueryContract(CW721Address);
 
@@ -103,12 +104,30 @@ const ShowEvents: FC<ShowEventsProps> = (props) => {
                     </div>
                 ) : (
                     <>
-                        {tokens.length === 0 && (
+                        <div className="w-full mb-4">
+                            <input
+                                type="text"
+                                placeholder="Search events by name"
+                                className="w-full p-2 rounded-md border border-gray-300"
+                                onChange={(e) => {
+                                    const searchTerm =
+                                        e.target.value.toLowerCase();
+                                    setFilteredTokens(
+                                        tokens.filter((token) =>
+                                            token.metadata.name
+                                                .toLowerCase()
+                                                .includes(searchTerm)
+                                        )
+                                    );
+                                }}
+                            />
+                        </div>
+                        {filteredTokens.length === 0 && (
                             <div className="text-center text-2xl mt-4 text-white">
                                 No events found
                             </div>
                         )}
-                        {tokens.map((token, index) => (
+                        {filteredTokens.map((token, index) => (
                             <Link
                                 key={index}
                                 href={`/events/${token.token_id}`}
