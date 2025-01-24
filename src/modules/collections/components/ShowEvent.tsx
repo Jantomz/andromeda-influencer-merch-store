@@ -109,6 +109,8 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
                 metadata: metadata,
             };
 
+            setLoading(false);
+
             const nonStringAttributes = metadata.attributes.filter(
                 (attribute: any) => typeof attribute.value !== "string"
             );
@@ -153,7 +155,6 @@ const ShowEvent: FC<ShowEventProps> = (props) => {
             setSellableTiersTicketsList(totalTiersList);
 
             setToken(tokenData);
-            setLoading(false);
         } catch (error) {
             toast({
                 title: "Error getting event",

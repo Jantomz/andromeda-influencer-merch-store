@@ -226,9 +226,9 @@ const ShowTickets: FC<ShowTicketsProps> = (props) => {
                 </div>
             ) : (
                 <>
-                    {renderTokens(currentEvents, "Current Events")}
-                    {renderTokens(upcomingEvents, "Upcoming Events")}
-                    {renderTokens(pastEvents, "Past Events")}
+                    {renderTokens(currentEvents, "Current Event Tickets")}
+                    {renderTokens(upcomingEvents, "Upcoming Event Tickets")}
+                    {renderTokens(pastEvents, "Past Event Tickets")}
                 </>
             )}
         </>
